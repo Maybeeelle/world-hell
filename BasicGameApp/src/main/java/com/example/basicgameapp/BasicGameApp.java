@@ -98,7 +98,7 @@ public class BasicGameApp extends GameApplication{
                 FXGL.getGameWorld().removeEntity(eagle);
             }
             run(() -> {
-                //lol I actually dont know what's does player.getCenter returns
+                //Hindi ko masyadong gets itonf getCenter huehue TmT
                 zombie.translateTowards(player.getCenter().subtract(zombie.getCenter()).multiply(4), 1);
                 zombie.rotateBy(50);
                 eagle.translateTowards(player.getCenter().subtract(eagle.getCenter()).multiply(4), 1);
