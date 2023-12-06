@@ -13,34 +13,34 @@ import javafx.scene.control.Label;
 
 public class Factory implements EntityFactory {
     @Spawns("zombie")
-    public Entity newZombie(SpawnData data){
+    public Entity newZombie(SpawnData data) {
         return FXGL.entityBuilder(data)
                 .type(BasicGameApp.EntityType.ZOMBIE)
                 //.view("zombie_final.png")
                 .viewWithBBox("zombie_colored.png")
-                .with(new ProjectileComponent(new Point2D(0,0), 500))
+                .with(new ProjectileComponent(new Point2D(0, 0), 500))
                 .with(new CollidableComponent(true))
                 .build();
     }
 
     @Spawns("eagle") //para kay eagle
-    public Entity newEagle(SpawnData data){
+    public Entity newEagle(SpawnData data) {
         return FXGL.entityBuilder(data)
                 .type(BasicGameApp.EntityType.EAGLE)
                 //.view("zombie_eagle.png")
                 .viewWithBBox("eagle_colored.png")
-                .with(new ProjectileComponent(new Point2D(0,0), 500))
+                .with(new ProjectileComponent(new Point2D(0, 0), 500))
                 .with(new CollidableComponent(true))
                 .build();
     }
 
     @Spawns("bird") //para kay eagle
-    public Entity newBird(SpawnData data){
+    public Entity newBird(SpawnData data) {
         return FXGL.entityBuilder(data)
                 .type(BasicGameApp.EntityType.EAGLE)
                 //.view("zombie_eagle.png")
                 .viewWithBBox("bird_colored.png")
-                .with(new ProjectileComponent(new Point2D(0,0), 500))
+                .with(new ProjectileComponent(new Point2D(0, 0), 500))
                 .with(new CollidableComponent(true))
                 .build();
     }
