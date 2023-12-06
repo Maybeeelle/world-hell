@@ -1,5 +1,5 @@
 package com.example.basicgameapp;
-
+import java.math.*;
 import com.almasb.fxgl.app.GameApplication;
 import com.almasb.fxgl.app.GameSettings;
 import com.almasb.fxgl.dsl.FXGL;
@@ -13,9 +13,12 @@ import com.almasb.fxgl.physics.CollisionHandler;
 import com.almasb.fxgl.physics.HitBox;
 import javafx.geometry.Point2D;
 import javafx.geometry.Rectangle2D;
+import javafx.scene.image.Image;
+import javafx.scene.image.ImageView;
 import javafx.scene.input.KeyCode;
 
 import javafx.scene.paint.Color;
+import javafx.scene.paint.Paint;
 import javafx.scene.shape.Rectangle;
 import javafx.scene.text.Text;
 import javafx.util.Duration;
@@ -35,6 +38,7 @@ public class BasicGameApp extends GameApplication{
         settings.setTitle("WorldHELL 0 ");
         settings.setVersion("0.1");//Lol anong version?
         settings.setSceneFactory(new sceneFactory());
+        settings.setGameMenuEnabled(true);
     }
 
     public static void main(String[] args){
@@ -48,22 +52,23 @@ public class BasicGameApp extends GameApplication{
     @Override
     protected void initGame(){
 
+        getGameScene().setBackgroundColor(Paint.valueOf("gray"));
 
         //this is our player entity creation lolololol
         player = FXGL.entityBuilder()
                 .type(EntityType.PLAYER)
-                .scale(0.25, 0.25)//for da adding the collision detection
+                .viewWithBBox("girl_colored.png")
+//                .scale(0.25, 0.25)//for da adding the collision detection
                 .at(FXGL.getAppWidth() / 2.0, FXGL.getAppHeight() / 2.0) //positioning
                                                 //.view(new Rectangle(25,25, Color.BLUE))
-                .view("girl_colored.png")
-                .viewWithBBox("girl_bbox.png")
+//                .viewWithBBox("391_X_413.png")
                 //.viewWithBBox(new Rectangle(30,60))
 
                 .with(new CollidableComponent(true))
                 .buildAndAttach();              //Anong ibigsabihin nito ni Build and Attach?? nvm gets ko na
 
-
-        getGameScene().getViewport().bindToEntity(player, player.getX() - player.getWidth() * .75, player.getY() - player.getHeight());
+        player.translate(new Point2D(player.getWidth() / 2.0,player.getHeight() / 2.0 ));
+        getGameScene().getViewport().bindToEntity(player, player.getX() - player.getWidth(), player.getY() - player.getHeight());
 
         player.addComponent(new HealthComponent());
 
@@ -75,36 +80,29 @@ public class BasicGameApp extends GameApplication{
             if (player.getComponent(HealthComponent.class).getHealth() <= 0){
                 FXGL.getGameWorld().removeEntity(player);
             }
-//            Entity zombie = spawn("zombie", FXGLMath.randomPoint(new Rectangle2D(0, 0, getAppWidth(), getAppHeight())));
-//            Entity eagle = spawn("eagle", FXGLMath.randomPoint(new Rectangle2D(0, 0, getAppWidth(), getAppHeight())));
+
             Entity zombie = spawn("zombie", new Point2D(-1,-1));
             Entity eagle = spawn("eagle", new Point2D(-1,-1));
-                                                 //yung mga sizes ng eagle at zombies
-            zombie.setScaleX(0.08);
-            zombie.setScaleY(0.08);
+            Entity bird = spawn("bird", new Point2D(-1,-1));
 
-            zombie.setPosition(FXGLMath.randomPoint(new Rectangle2D(-getAppWidth() * .9 - zombie.getWidth() * .5,-getAppHeight() * .9 - zombie.getHeight() * .8,getAppWidth() * 3, getAppHeight() * 3)));
-            if (zombie.getX() < getAppWidth() && zombie.getX() > 0
-            && zombie.getY() > 0 && zombie.getY() < getAppHeight()
-            ){
-                FXGL.getGameWorld().removeEntity(zombie);
-            }
-            eagle.setScaleX(0.06);
-            eagle.setScaleY(0.06);
-            eagle.setPosition(FXGLMath.randomPoint(new Rectangle2D(-getAppWidth() * .5 - eagle.getWidth() * .2,-getAppHeight() * .5 - eagle.getHeight() * .2,getAppWidth() * 2, getAppHeight() * 2)));
-            if (eagle.getX() < getAppWidth() && eagle.getX() > 0
-                    && eagle.getY() > 0 && eagle.getY() < getAppHeight()
-            ){
-                FXGL.getGameWorld().removeEntity(eagle);
-            }
+            initPosition(zombie);
+            initPosition(eagle);
+            initPosition(bird);
+
+            zombie.setRotation(8d);
+
             run(() -> {
-                //Hindi ko masyadong gets itonf getCenter huehue TmT
-                zombie.translateTowards(player.getCenter().subtract(zombie.getCenter()).multiply(4), 1);
-                zombie.rotateBy(50);
-                eagle.translateTowards(player.getCenter().subtract(eagle.getCenter()).multiply(4), 1);
-//                eagle.translateTowards(player.getCenter().multiply(2), 1.5);
+                Point2D playerCenter = player.getCenter().subtract(player.getWidth(), player.getHeight());
+
+
+                zombie.translateTowards(player.getCenter().subtract(zombie.getWidth()/2.0, zombie.getHeight()/2.0), 1);
+                eagle.translateTowards(playerCenter.add(eagle.getWidth() /2.0, eagle.getHeight() / 2.0), 1);
+                bird.translateTowards(player.getCenter().subtract(bird.getWidth()/2.0, bird.getHeight()/2.0), 1);
 
             }, Duration.seconds(0));
+            getGameTimer().runAtInterval(() -> {
+                zombie.setRotation(zombie.getRotation() * -1);
+            }, Duration.millis(400));
         }, Duration.seconds(0.5));
 
     }
@@ -183,4 +181,14 @@ public class BasicGameApp extends GameApplication{
             }
         });
     }
+
+    void initPosition(Entity entity) {
+        entity.setPosition(FXGLMath.randomPoint(new Rectangle2D(-getAppWidth() * .9 - entity.getWidth() * .5,-getAppHeight() * .9 - entity.getHeight() * .8,getAppWidth() * 3, getAppHeight() * 3)));
+        if (entity.getX() < getAppWidth() && entity.getX() > 0
+                && entity.getY() > 0 && entity.getY() < getAppHeight()
+        ){
+            getGameWorld().removeEntity(entity);
+        }
+    }
 }
+

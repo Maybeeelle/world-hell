@@ -33,4 +33,15 @@ public class Factory implements EntityFactory {
                 .with(new CollidableComponent(true))
                 .build();
     }
+
+    @Spawns("bird") //para kay eagle
+    public Entity newBird(SpawnData data){
+        return FXGL.entityBuilder(data)
+                .type(BasicGameApp.EntityType.EAGLE)
+                //.view("zombie_eagle.png")
+                .viewWithBBox("bird_colored.png")
+                .with(new ProjectileComponent(new Point2D(0,0), 500))
+                .with(new CollidableComponent(true))
+                .build();
+    }
 }
