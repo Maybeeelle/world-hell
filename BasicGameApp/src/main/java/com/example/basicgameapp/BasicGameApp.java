@@ -49,7 +49,6 @@ public class BasicGameApp extends GameApplication{
         settings.setHeight(800);
         settings.setTitle("WorldHELL 0 ");
         settings.setVersion("0.1");//Lol anong version?
-//        settings.setSceneFactory(new sceneFactory());
         settings.setGameMenuEnabled(true);
         settings.setMainMenuEnabled(true);
     }
