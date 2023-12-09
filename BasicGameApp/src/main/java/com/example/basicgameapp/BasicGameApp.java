@@ -2,6 +2,7 @@ package com.example.basicgameapp;
 import java.math.*;
 import com.almasb.fxgl.app.GameApplication;
 import com.almasb.fxgl.app.GameSettings;
+import com.almasb.fxgl.app.scene.GameView;
 import com.almasb.fxgl.dsl.FXGL;
 import com.almasb.fxgl.entity.Entity;
 import com.almasb.fxgl.core.math.FXGLMath;
@@ -13,10 +14,16 @@ import com.almasb.fxgl.physics.CollisionHandler;
 import com.almasb.fxgl.physics.HitBox;
 import javafx.geometry.Point2D;
 import javafx.geometry.Rectangle2D;
+import javafx.scene.Group;
+import javafx.scene.Node;
+import javafx.scene.SubScene;
+import javafx.scene.control.Button;
 import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
 import javafx.scene.input.KeyCode;
+import javafx.scene.Scene;
 
+import javafx.scene.layout.VBox;
 import javafx.scene.paint.Color;
 import javafx.scene.paint.Paint;
 import javafx.scene.shape.Rectangle;
@@ -24,12 +31,17 @@ import javafx.scene.text.Text;
 import javafx.util.Duration;
 
 import java.util.Map;
+import java.util.Timer;
+
 import static com.almasb.fxgl.dsl.FXGL.*;
 
 public class BasicGameApp extends GameApplication{
 
+//    SubScene gameOver = new SubScene(new Group(new Text("Game Over")),800,800);
     private GameSettings settings;//pagdeclare kay player na may datatype na Entity
     private Entity player;
+    private Text timerText;
+    private int timeSeconds = 60;
     @Override
     protected void initSettings(GameSettings settings){
                                                 //sa Windows nung game 600 X2 600 na siya
@@ -37,8 +49,9 @@ public class BasicGameApp extends GameApplication{
         settings.setHeight(800);
         settings.setTitle("WorldHELL 0 ");
         settings.setVersion("0.1");//Lol anong version?
-        settings.setSceneFactory(new sceneFactory());
+//        settings.setSceneFactory(new sceneFactory());
         settings.setGameMenuEnabled(true);
+        settings.setMainMenuEnabled(true);
     }
 
     public static void main(String[] args){
@@ -47,28 +60,41 @@ public class BasicGameApp extends GameApplication{
 
 
     public enum EntityType{                     //forda adding the collision detection
-        PLAYER,EAGLE, ZOMBIE
+        PLAYER,EAGLE, ZOMBIE, SWIPE, BIRD, WIN
     }
     @Override
     protected void initGame(){
 
-        getGameScene().setBackgroundColor(Paint.valueOf("gray"));
+//        getGameScene().setBackgroundColor(Paint.valueOf("gray"));
+
+        timerText = FXGL.getUIFactoryService().newText("",Color.BLACK, 24.0);
+        timerText.setTranslateX(50);
+        timerText.setTranslateY(50);
+
+        FXGL.getGameScene().addUINode(timerText);
+
+        Node background = FXGL.getAssetLoader().loadTexture("background.jpg");
+        background.setScaleX(5.0);
+        background.setScaleY(5.0);
+
+        GameView backgroundView = new GameView(background, 0);
+
+        getGameScene().addGameView(backgroundView);
+
 
         //this is our player entity creation lolololol
         player = FXGL.entityBuilder()
                 .type(EntityType.PLAYER)
                 .viewWithBBox("girl_colored.png")
-//                .scale(0.25, 0.25)//for da adding the collision detection
                 .at(FXGL.getAppWidth() / 2.0, FXGL.getAppHeight() / 2.0) //positioning
-                                                //.view(new Rectangle(25,25, Color.BLUE))
-//                .viewWithBBox("391_X_413.png")
-                //.viewWithBBox(new Rectangle(30,60))
 
                 .with(new CollidableComponent(true))
                 .buildAndAttach();              //Anong ibigsabihin nito ni Build and Attach?? nvm gets ko na
 
         player.translate(new Point2D(player.getWidth() / 2.0,player.getHeight() / 2.0 ));
         getGameScene().getViewport().bindToEntity(player, player.getX() - player.getWidth(), player.getY() - player.getHeight());
+
+        getGameScene().getViewport().setBounds(-1266, -1865, 1266, 1865);
 
         player.addComponent(new HealthComponent());
 
@@ -78,7 +104,8 @@ public class BasicGameApp extends GameApplication{
         run(() -> {
 
             if (player.getComponent(HealthComponent.class).getHealth() <= 0){
-                FXGL.getGameWorld().removeEntity(player);
+                getGameWorld().removeEntity(player);
+//                getSceneService().pushSubScene(gameOver);
             }
 
             Entity zombie = spawn("zombie", new Point2D(-1,-1));
@@ -90,21 +117,43 @@ public class BasicGameApp extends GameApplication{
             initPosition(bird);
 
             zombie.setRotation(8d);
+            bird.setRotation(8d);
 
             run(() -> {
                 Point2D playerCenter = player.getCenter().subtract(player.getWidth(), player.getHeight());
-
 
                 zombie.translateTowards(player.getCenter().subtract(zombie.getWidth()/2.0, zombie.getHeight()/2.0), 1);
                 eagle.translateTowards(playerCenter.add(eagle.getWidth() /2.0, eagle.getHeight() / 2.0), 1);
                 bird.translateTowards(player.getCenter().subtract(bird.getWidth()/2.0, bird.getHeight()/2.0), 1);
 
             }, Duration.seconds(0));
+
             getGameTimer().runAtInterval(() -> {
                 zombie.setRotation(zombie.getRotation() * -1);
+                bird.setRotation(bird.getRotation() * -1);
             }, Duration.millis(400));
-        }, Duration.seconds(0.5));
 
+
+
+        }, Duration.seconds(0.5));
+        // player swipes
+        getGameTimer().runAtInterval(() -> {
+            Entity swipe = spawn("swipe", new Point2D(player.getX() + 128, player.getY()));
+            despawnWithDelay(swipe, Duration.millis(100));
+        }, Duration.millis(1000));
+
+    }
+
+
+    @Override
+    protected void onUpdate(double tpf) {
+        timerText.setText("Time: " + (int) getGameTimer().getNow());
+
+        if (getGameTimer().getNow() > 10) {
+            getGameController().gotoMainMenu();
+            // win
+            Entity win = spawn("win", new Point2D(player.getX(), player.getY()));
+        }
     }
 
     @Override
@@ -132,20 +181,13 @@ public class BasicGameApp extends GameApplication{
 
    @Override
     protected void initUI(){
-//        var backgroundPicture= getAssetLoader().loadTexture("paper.jpg");
-//        backgroundPicture.setTranslateX(0);
-//        backgroundPicture.setTranslateY(0);
-//       backgroundPicture.setScaleX(2);
-//       backgroundPicture.setScaleY(2);
         Text textPixels= new Text();
         textPixels.setTranslateX(50);
         textPixels.setTranslateY(100);
-//       getGameScene().addUINode(backgroundPicture);
         Text label= new Text("Pixels Moved: ");
        label.setTranslateX(50);
        label.setTranslateY(85);
        textPixels.textProperty().bind(FXGL.getWorldProperties().intProperty("pixelsMoved").asString());
-//       textPixels.textProperty().bind(FXGL.getWorldProperties().intProperty("playerPosition").asString());
        FXGL.getGameScene().addUINode(label);
        FXGL.getGameScene().addUINode(textPixels); //add to the scene graph
    }
@@ -164,9 +206,7 @@ public class BasicGameApp extends GameApplication{
             @Override
             protected void onCollisionBegin(Entity player, Entity zombie){
                 // TODO: make a damage component of zombie
-                FXGL.play("slayy.wav");
-                //player.getComponent(HealthComponent.class).setHealth(player.getComponent(HealthComponent.class).getHealth() - 10); // zombie damages player by 10 points
-                FXGL.getGameWorld().removeEntity(zombie);
+                player.getComponent(HealthComponent.class).setHealth(player.getComponent(HealthComponent.class).getHealth() - 10); // zombie damages player by 10 points
             }
         });
 
@@ -175,8 +215,31 @@ public class BasicGameApp extends GameApplication{
         FXGL.getPhysicsWorld().addCollisionHandler(new CollisionHandler(EntityType.PLAYER, EntityType.EAGLE) {
             @Override
             protected void onCollisionBegin(Entity player, Entity eagle){
+                // damage player
+
+            }
+        });
+        FXGL.getPhysicsWorld().addCollisionHandler(new CollisionHandler(EntityType.SWIPE, EntityType.EAGLE) {
+            @Override
+            protected void onCollisionBegin(Entity swipe, Entity eagle){
                 FXGL.play("eagle_death.wav");
                 FXGL.getGameWorld().removeEntity(eagle);
+
+            }
+        });
+        FXGL.getPhysicsWorld().addCollisionHandler(new CollisionHandler(EntityType.SWIPE, EntityType.ZOMBIE) {
+            @Override
+            protected void onCollisionBegin(Entity swipe, Entity zombie){
+                FXGL.play("slayy.wav");
+                FXGL.getGameWorld().removeEntity(zombie);
+
+            }
+        });
+        FXGL.getPhysicsWorld().addCollisionHandler(new CollisionHandler(EntityType.SWIPE, EntityType.BIRD) {
+            @Override
+            protected void onCollisionBegin(Entity swipe, Entity bird){
+                FXGL.play("eagle_death.wav");
+                FXGL.getGameWorld().removeEntity(bird);
 
             }
         });

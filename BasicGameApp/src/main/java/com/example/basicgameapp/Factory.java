@@ -37,11 +37,33 @@ public class Factory implements EntityFactory {
     @Spawns("bird") //para kay eagle
     public Entity newBird(SpawnData data) {
         return FXGL.entityBuilder(data)
-                .type(BasicGameApp.EntityType.EAGLE)
+                .type(BasicGameApp.EntityType.BIRD)
                 //.view("zombie_eagle.png")
-                .viewWithBBox("bird_colored.png")
+                .viewWithBBox("joshua.jpg")
                 .with(new ProjectileComponent(new Point2D(0, 0), 500))
                 .with(new CollidableComponent(true))
                 .build();
     }
+    @Spawns("swipe") //para kay eagle
+    public Entity newSwipe(SpawnData data) {
+        return FXGL.entityBuilder(data)
+                .type(BasicGameApp.EntityType.SWIPE)
+                //.view("zombie_eagle.png")
+                .viewWithBBox("swipe.png")
+                .with(new ProjectileComponent(new Point2D(0, 0), 500))
+                .with(new CollidableComponent(true))
+                .build();
+    }
+
+    @Spawns("win") //para kay eagle
+    public Entity newWin(SpawnData data) {
+        return FXGL.entityBuilder(data)
+                .type(BasicGameApp.EntityType.WIN)
+                //.view("zombie_eagle.png")
+                .viewWithBBox("you_win.png")
+                .with(new ProjectileComponent(new Point2D(0, 0), 500))
+                .with(new CollidableComponent(true))
+                .build();
+    }
+
 }
