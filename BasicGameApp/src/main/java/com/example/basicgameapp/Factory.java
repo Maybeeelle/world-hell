@@ -66,4 +66,15 @@ public class Factory implements EntityFactory {
                 .build();
     }
 
+    @Spawns("coin")
+    public Entity newCoin(SpawnData data) {
+        return FXGL.entityBuilder(data)
+                .type(BasicGameApp.EntityType.COIN)
+                //.view("zombie_final.png")
+                .viewWithBBox("pisos.png")
+                //.with(new ProjectileComponent(new Point2D(0, 0), 500))
+                .with(new CollidableComponent(true))
+                .build();
+    }
+
 }

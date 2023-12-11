@@ -40,6 +40,9 @@ public class BasicGameApp extends GameApplication{
 //    SubScene gameOver = new SubScene(new Group(new Text("Game Over")),800,800);
     private GameSettings settings;//pagdeclare kay player na may datatype na Entity
     private Entity player;
+    private Text coinText;
+
+    private int coins=0;
     private Text timerText;
     private int timeSeconds = 60;
     @Override
@@ -59,7 +62,7 @@ public class BasicGameApp extends GameApplication{
 
 
     public enum EntityType{                     //forda adding the collision detection
-        PLAYER,EAGLE, ZOMBIE, SWIPE, BIRD, WIN
+        PLAYER,EAGLE, ZOMBIE, SWIPE, BIRD, WIN, COIN
     }
     @Override
     protected void initGame(){
@@ -70,7 +73,14 @@ public class BasicGameApp extends GameApplication{
         timerText.setTranslateX(50);
         timerText.setTranslateY(50);
 
+        //For the display of the coins count
+        coinText = FXGL.getUIFactoryService().newText("",Color.BLACK, 20.0);
+        coinText.setTranslateX(50);
+        coinText.setTranslateY(70);
+
         FXGL.getGameScene().addUINode(timerText);
+        FXGL.getGameScene().addUINode(coinText);
+
 
         Node background = FXGL.getAssetLoader().loadTexture("background.jpg");
         background.setScaleX(5.0);
@@ -148,7 +158,7 @@ public class BasicGameApp extends GameApplication{
     protected void onUpdate(double tpf) {
         timerText.setText("Time: " + (int) getGameTimer().getNow());
 
-        if (getGameTimer().getNow() > 10) {
+        if (getGameTimer().getNow() > 600) {
             getGameController().gotoMainMenu();
             // win
             Entity win = spawn("win", new Point2D(player.getX(), player.getY()));
@@ -184,11 +194,15 @@ public class BasicGameApp extends GameApplication{
         textPixels.setTranslateX(50);
         textPixels.setTranslateY(100);
         Text label= new Text("Pixels Moved: ");
-       label.setTranslateX(50);
-       label.setTranslateY(85);
-       textPixels.textProperty().bind(FXGL.getWorldProperties().intProperty("pixelsMoved").asString());
-       FXGL.getGameScene().addUINode(label);
-       FXGL.getGameScene().addUINode(textPixels); //add to the scene graph
+
+        label.setTranslateX(50);
+        label.setTranslateY(85);
+        textPixels.textProperty().bind(FXGL.getWorldProperties().intProperty("pixelsMoved").asString());
+
+
+
+        FXGL.getGameScene().addUINode(label);
+        FXGL.getGameScene().addUINode(textPixels); //add to the scene graph
    }
 
     @Override
@@ -223,6 +237,19 @@ public class BasicGameApp extends GameApplication{
             protected void onCollisionBegin(Entity swipe, Entity eagle){
                 FXGL.play("eagle_death.wav");
                 FXGL.getGameWorld().removeEntity(eagle);
+                Entity coin = spawn("coin", eagle.getPosition());
+
+            }
+        });
+
+        FXGL.getPhysicsWorld().addCollisionHandler(new CollisionHandler(EntityType.PLAYER, EntityType.COIN) {
+            @Override
+            protected void onCollisionBegin(Entity player, Entity coin){
+                //FXGL.play("eagle_death.wav");
+                FXGL.getGameWorld().removeEntity(coin);
+                coins= coins + 1;
+                coinText.setText("Coin: " + coins);
+
 
             }
         });
