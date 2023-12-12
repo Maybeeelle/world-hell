@@ -51,7 +51,7 @@ public class BasicGameApp extends GameApplication{
         settings.setWidth(800);
         settings.setHeight(800);
         settings.setTitle("WorldHELL 0 ");
-        settings.setVersion("0.1");//Lol anong version?
+        settings.setVersion("0.1");
         settings.setGameMenuEnabled(true);
         settings.setMainMenuEnabled(true);
     }
@@ -98,8 +98,7 @@ public class BasicGameApp extends GameApplication{
                 .at(FXGL.getAppWidth() / 2.0, FXGL.getAppHeight() / 2.0) //positioning
 
                 .with(new CollidableComponent(true))
-                .buildAndAttach();              //Anong ibigsabihin nito ni Build and Attach?? nvm gets ko na
-
+                .buildAndAttach();
         player.translate(new Point2D(player.getWidth() / 2.0,player.getHeight() / 2.0 ));
         getGameScene().getViewport().bindToEntity(player, player.getX() - player.getWidth(), player.getY() - player.getHeight());
 
@@ -248,7 +247,7 @@ public class BasicGameApp extends GameApplication{
                 //FXGL.play("eagle_death.wav");
                 FXGL.getGameWorld().removeEntity(coin);
                 coins= coins + 1;
-                coinText.setText("Coin: " + coins);
+                coinText.setText("Coins: " + coins);
 
 
             }
@@ -258,6 +257,7 @@ public class BasicGameApp extends GameApplication{
             protected void onCollisionBegin(Entity swipe, Entity zombie){
                 FXGL.play("slayy.wav");
                 FXGL.getGameWorld().removeEntity(zombie);
+                Entity coin = spawn("coin", zombie.getPosition());
 
             }
         });
@@ -266,6 +266,7 @@ public class BasicGameApp extends GameApplication{
             protected void onCollisionBegin(Entity swipe, Entity bird){
                 FXGL.play("eagle_death.wav");
                 FXGL.getGameWorld().removeEntity(bird);
+                Entity coin = spawn("coin", bird.getPosition());
 
             }
         });
