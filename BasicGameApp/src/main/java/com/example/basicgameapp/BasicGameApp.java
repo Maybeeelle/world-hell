@@ -117,6 +117,7 @@ public class BasicGameApp extends GameApplication{
 
         run(() -> {
 
+            // player death
             if (geti("hp") <= 0){
                 // score = coins / time + time
                 set("score", geti("coins") / (int) getGameTimer().getNow() * 100 + (int) getGameTimer().getNow());
@@ -143,7 +144,7 @@ public class BasicGameApp extends GameApplication{
 
             }, Duration.seconds(0));
 
-            getGameTimer().runAtInterval(() -> {
+            run(() -> {
                 zombie.setRotation(zombie.getRotation() * -1);
                 bird.setRotation(bird.getRotation() * -1);
             }, Duration.millis(400));
@@ -167,7 +168,7 @@ public class BasicGameApp extends GameApplication{
         timerText.setText("Time: " + geti("time"));
 
         // game ends in 5 mins
-        if (geti("time") > 600) {
+        if (geti("time") >= 600) {
             youWin();
         }
     }
@@ -218,6 +219,7 @@ public class BasicGameApp extends GameApplication{
     @Override
     protected void initPhysics(){
         //Collision Handler can only handle two types of entities
+
         //Collision handler for the zombies
         FXGL.getPhysicsWorld().addCollisionHandler(new CollisionHandler(EntityType.PLAYER, EntityType.ZOMBIE) {
             @Override
@@ -229,11 +231,12 @@ public class BasicGameApp extends GameApplication{
         });
 
         //Collision handler for the eagles
-
         FXGL.getPhysicsWorld().addCollisionHandler(new CollisionHandler(EntityType.PLAYER, EntityType.EAGLE) {
             @Override
             protected void onCollisionBegin(Entity player, Entity eagle){
                 // damage player
+                inc("hp", -10);
+                play("ai.wav");
             }
         });
         FXGL.getPhysicsWorld().addCollisionHandler(new CollisionHandler(EntityType.SWIPE, EntityType.EAGLE) {
@@ -272,7 +275,6 @@ public class BasicGameApp extends GameApplication{
                 FXGL.play("eagle_death.wav");
                 FXGL.getGameWorld().removeEntity(bird);
                 Entity coin = spawn("coin", bird.getPosition());
-
             }
         });
     }

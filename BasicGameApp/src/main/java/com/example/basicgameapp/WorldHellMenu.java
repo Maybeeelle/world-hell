@@ -23,7 +23,10 @@ public class WorldHellMenu extends FXGLMenu {
 //            setBackgroundImage(System.getProperty("user.dir") + "/src/main/resources/assets/textures/BG.png");
             //dito sana yung mga buttons chuchu
 
-            var menuBox = new VBox(3, new MenuButton("New Game", () ->fireNewGame()));
+            var menuBox = new VBox(3,
+                    new MenuButton("New Game", () ->fireNewGame()),
+                    new MenuButton("Quit", () -> fireExit())
+            );
             menuBox.setAlignment(Pos.TOP_CENTER);
             menuBox.setTranslateX(getAppWidth() / 2.0 -125);
             menuBox.setTranslateX(getAppHeight() / 2.0 -125);
