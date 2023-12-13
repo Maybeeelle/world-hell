@@ -45,7 +45,6 @@ public class BasicGameApp extends GameApplication{
     private Entity player;
     private Text coinText;
     private Text timerText;
-    private int timeSeconds = 60;
     @Override
     protected void initSettings(GameSettings settings){
                                                 //sa Windows nung game 600 X2 600 na siya
@@ -197,20 +196,6 @@ public class BasicGameApp extends GameApplication{
 
    @Override
     protected void initUI(){
-        Text textPixels= new Text();
-        textPixels.setTranslateX(50);
-        textPixels.setTranslateY(100);
-        Text label= new Text("Pixels Moved: ");
-
-        label.setTranslateX(50);
-        label.setTranslateY(85);
-        textPixels.textProperty().bind(FXGL.getWorldProperties().intProperty("pixelsMoved").asString());
-
-
-
-        FXGL.getGameScene().addUINode(label);
-        FXGL.getGameScene().addUINode(textPixels); //add to the scene graph
-
        //For the display of the coins count
        coinText = FXGL.getUIFactoryService().newText("",Color.BLACK, 20.0);
        coinText.setTranslateX(50);
