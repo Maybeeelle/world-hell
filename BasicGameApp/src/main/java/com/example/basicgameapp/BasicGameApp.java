@@ -105,19 +105,18 @@ public class BasicGameApp extends GameApplication{
                 .with(new CollidableComponent(true))
                 .buildAndAttach();
         player.translate(new Point2D(player.getWidth() / 2.0,player.getHeight() / 2.0 ));
+
         getGameScene().getViewport().bindToEntity(player, player.getX() - player.getWidth(), player.getY() - player.getHeight());
 
         getGameScene().getViewport().setBounds(-1266, -1865, 1266, 1865);
 
-        player.addComponent(new HealthComponent());
-
-        player.getComponent(HealthComponent.class).setHealth(100);
         getGameWorld().addEntityFactory(new Factory());
 
         run(() -> {
 
             if (geti("hp") <= 0){
-                set("score", geti("coins") / (int) getGameTimer().getNow() * 100);
+                // score = coins / time + time
+                set("score", geti("coins") / (int) getGameTimer().getNow() * 100 + (int) getGameTimer().getNow());
                 gameOver();
             }
 
@@ -162,10 +161,8 @@ public class BasicGameApp extends GameApplication{
     protected void onUpdate(double tpf) {
         timerText.setText("Time: " + (int) getGameTimer().getNow());
 
-        if (getGameTimer().getNow() > 600) {
-            getGameController().gotoMainMenu();
-            // win
-            Entity win = spawn("win", new Point2D(player.getX(), player.getY()));
+        if (getGameTimer().getNow() > 10) {
+            youWin();
         }
     }
 
@@ -283,6 +280,9 @@ public class BasicGameApp extends GameApplication{
     }
 
     void gameOver() {
-        showMessage("Your Score: " + geti("score"), () -> getGameController().gotoMainMenu());
+        showMessage("You Lose!\nYour Score: " + geti("score"), () -> getGameController().gotoMainMenu());
+    }
+    void youWin() {
+        showMessage("You Win!\nYour Score: " + geti("score"), () -> getGameController().gotoMainMenu());
     }
 }
