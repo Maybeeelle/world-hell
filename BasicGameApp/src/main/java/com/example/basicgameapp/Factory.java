@@ -55,17 +55,6 @@ public class Factory implements EntityFactory {
                 .build();
     }
 
-    @Spawns("win") //para kay eagle
-    public Entity newWin(SpawnData data) {
-        return FXGL.entityBuilder(data)
-                .type(BasicGameApp.EntityType.WIN)
-                //.view("zombie_eagle.png")
-                .viewWithBBox("you_win.png")
-                .with(new ProjectileComponent(new Point2D(0, 0), 500))
-                .with(new CollidableComponent(true))
-                .build();
-    }
-
     @Spawns("coin")
     public Entity newCoin(SpawnData data) {
         return FXGL.entityBuilder(data)

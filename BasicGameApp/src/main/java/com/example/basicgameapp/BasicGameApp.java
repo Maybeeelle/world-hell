@@ -40,8 +40,6 @@ import static com.almasb.fxgl.dsl.FXGL.*;
 
 public class BasicGameApp extends GameApplication{
 
-//    SubScene gameOver = new SubScene(new Group(new Text("Game Over")),800,800);
-    private GameSettings settings;//pagdeclare kay player na may datatype na Entity
     private Entity player;
     private Text coinText;
     private Text timerText;
@@ -73,7 +71,12 @@ public class BasicGameApp extends GameApplication{
 
 
     public enum EntityType{                     //forda adding the collision detection
-        PLAYER,EAGLE, ZOMBIE, SWIPE, BIRD, WIN, COIN
+        PLAYER,
+        EAGLE,
+        ZOMBIE,
+        SWIPE,
+        BIRD,
+        COIN
     }
 
 
@@ -84,11 +87,6 @@ public class BasicGameApp extends GameApplication{
 
     @Override
     protected void initGame(){
-
-//        getGameScene().setBackgroundColor(Paint.valueOf("gray"));
-
-
-
         Node background = FXGL.getAssetLoader().loadTexture("background.jpg");
         background.setScaleX(5.0);
         background.setScaleY(5.0);
@@ -118,7 +116,7 @@ public class BasicGameApp extends GameApplication{
 
         run(() -> {
 
-            if (player.getComponent(HealthComponent.class).getHealth() <= 0){
+            if (geti("hp") <= 0){
                 set("score", geti("coins") / (int) getGameTimer().getNow() * 100);
                 gameOver();
             }
@@ -210,6 +208,7 @@ public class BasicGameApp extends GameApplication{
     protected void initGameVars(Map<String, Object> vars) {// creating a global variable named vars
         vars.put("score", 0);
         vars.put("coins", 0);
+        vars.put("hp", 100);
     }
 
     @Override
@@ -220,7 +219,7 @@ public class BasicGameApp extends GameApplication{
             @Override
             protected void onCollisionBegin(Entity player, Entity zombie){
                 // TODO: make a damage component of zombie
-                player.getComponent(HealthComponent.class).setHealth(player.getComponent(HealthComponent.class).getHealth() - 10); // zombie damages player by 10 points
+                inc("hp", -10);
                 play("ai.wav");
             }
         });
