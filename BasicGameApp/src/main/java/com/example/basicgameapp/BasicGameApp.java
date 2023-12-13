@@ -221,6 +221,7 @@ public class BasicGameApp extends GameApplication{
             protected void onCollisionBegin(Entity player, Entity zombie){
                 // TODO: make a damage component of zombie
                 player.getComponent(HealthComponent.class).setHealth(player.getComponent(HealthComponent.class).getHealth() - 10); // zombie damages player by 10 points
+                play("ai.wav");
             }
         });
 
