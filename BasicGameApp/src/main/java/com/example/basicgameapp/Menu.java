@@ -22,7 +22,7 @@ public class Menu  extends Application {
         Pane root= new Pane();
         root.setPrefSize(800,800);
 
-        InputStream is= Files.newInputStream(Paths.get("C:/Users/majah/OneDrive/Desktop/world-hell/BasicGameApp/src/main/resources/assets/textures/sampleBackground.jpg"));
+        InputStream is= Files.newInputStream(Paths.get("C:/Users/majah/OneDrive/Desktop/world-hell/BasicGameApp/src/main/resources/assets/textures/BG.png"));
         Image img=  new Image(is);
         is.close();
 

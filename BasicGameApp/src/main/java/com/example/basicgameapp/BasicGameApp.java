@@ -2,7 +2,10 @@ package com.example.basicgameapp;
 import java.math.*;
 import com.almasb.fxgl.app.GameApplication;
 import com.almasb.fxgl.app.GameSettings;
+import com.almasb.fxgl.app.scene.FXGLMenu;
 import com.almasb.fxgl.app.scene.GameView;
+import com.almasb.fxgl.app.scene.MenuType;
+import com.almasb.fxgl.app.scene.SceneFactory;
 import com.almasb.fxgl.dsl.FXGL;
 import com.almasb.fxgl.entity.Entity;
 import com.almasb.fxgl.core.math.FXGLMath;
@@ -52,7 +55,18 @@ public class BasicGameApp extends GameApplication{
         settings.setHeight(800);
         settings.setTitle("WorldHELL 0 ");
         settings.setVersion("0.1");
-        settings.setGameMenuEnabled(true);
+        settings.setSceneFactory(new SceneFactory(){
+            @Override
+            public FXGLMenu newMainMenu(){
+                return new WorldHellMenu(MenuType.MAIN_MENU);
+            }
+
+            @Override
+            public FXGLMenu newGameMenu(){
+                return new WorldHellMenu(MenuType.GAME_MENU);
+            }
+        });
+        //settings.setGameMenuEnabled(true);
         settings.setMainMenuEnabled(true);
     }
 
@@ -64,6 +78,8 @@ public class BasicGameApp extends GameApplication{
     public enum EntityType{                     //forda adding the collision detection
         PLAYER,EAGLE, ZOMBIE, SWIPE, BIRD, WIN, COIN
     }
+
+
     @Override
     protected void initGame(){
 
@@ -112,8 +128,9 @@ public class BasicGameApp extends GameApplication{
         run(() -> {
 
             if (player.getComponent(HealthComponent.class).getHealth() <= 0){
-                getGameWorld().removeEntity(player);
+//                getGameWorld().removeEntity(player);
 //                getSceneService().pushSubScene(gameOver);
+                getGameController().gotoMainMenu();
             }
 
             Entity zombie = spawn("zombie", new Point2D(-1,-1));
@@ -228,7 +245,6 @@ public class BasicGameApp extends GameApplication{
             @Override
             protected void onCollisionBegin(Entity player, Entity eagle){
                 // damage player
-
             }
         });
         FXGL.getPhysicsWorld().addCollisionHandler(new CollisionHandler(EntityType.SWIPE, EntityType.EAGLE) {
