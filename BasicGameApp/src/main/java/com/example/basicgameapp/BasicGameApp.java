@@ -119,6 +119,7 @@ public class BasicGameApp extends GameApplication{
         run(() -> {
 
             if (player.getComponent(HealthComponent.class).getHealth() <= 0){
+                set("score", geti("coins") / (int) getGameTimer().getNow() * 100);
                 gameOver();
             }
 
@@ -162,7 +163,6 @@ public class BasicGameApp extends GameApplication{
     @Override
     protected void onUpdate(double tpf) {
         timerText.setText("Time: " + (int) getGameTimer().getNow());
-        inc("score", +1);
 
         if (getGameTimer().getNow() > 600) {
             getGameController().gotoMainMenu();
@@ -175,22 +175,18 @@ public class BasicGameApp extends GameApplication{
     protected void initInput() {
         FXGL.onKey(KeyCode.D, () -> {
             player.translateX(4);
-            FXGL.inc("pixelsMoved", +5);
         });
 
         FXGL.onKey(KeyCode.A, () -> {
             player.translateX(-5);
-            FXGL.inc("pixelsMoved", +5);
         });
 
         FXGL.onKey(KeyCode.W, () -> {
             player.translateY(-5);
-            FXGL.inc("pixelsMoved", +5);
         });
 
         FXGL.onKey(KeyCode.S, () -> {
             player.translateY(5);
-            FXGL.inc("pixelsMoved", +5);
         });
     }
 
@@ -212,7 +208,6 @@ public class BasicGameApp extends GameApplication{
 
     @Override
     protected void initGameVars(Map<String, Object> vars) {// creating a global variable named vars
-        vars.put("pixelsMoved", 0);
         vars.put("score", 0);
         vars.put("coins", 0);
     }
