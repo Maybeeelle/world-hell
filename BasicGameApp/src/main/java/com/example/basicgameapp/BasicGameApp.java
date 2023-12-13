@@ -95,19 +95,17 @@ public class BasicGameApp extends GameApplication{
 
         getGameScene().addGameView(backgroundView);
 
-
         //this is our player entity creation lolololol
         player = FXGL.entityBuilder()
                 .type(EntityType.PLAYER)
                 .viewWithBBox("girl_colored.png")
                 .at(FXGL.getAppWidth() / 2.0, FXGL.getAppHeight() / 2.0) //positioning
-
                 .with(new CollidableComponent(true))
                 .buildAndAttach();
+
         player.translate(new Point2D(player.getWidth() / 2.0,player.getHeight() / 2.0 ));
 
         getGameScene().getViewport().bindToEntity(player, player.getX() - player.getWidth(), player.getY() - player.getHeight());
-
         getGameScene().getViewport().setBounds(-1266, -1865, 1266, 1865);
 
         getGameWorld().addEntityFactory(new Factory());
@@ -161,7 +159,8 @@ public class BasicGameApp extends GameApplication{
     protected void onUpdate(double tpf) {
         timerText.setText("Time: " + (int) getGameTimer().getNow());
 
-        if (getGameTimer().getNow() > 10) {
+        // game ends in 5 mins
+        if (getGameTimer().getNow() > 600) {
             youWin();
         }
     }
