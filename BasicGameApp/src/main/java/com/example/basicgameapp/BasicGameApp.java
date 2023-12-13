@@ -82,11 +82,16 @@ public class BasicGameApp extends GameApplication{
 
     @Override
     protected void onPreInit() {
-        loopBGM("Doom Eternal OST - The Only Thing They Fear Is You (Mick Gordon) [Doom Eternal Theme].mp3");
     }
 
     @Override
     protected void initGame(){
+
+        loopBGM("Doom Eternal OST - The Only Thing They Fear Is You (Mick Gordon) [Doom Eternal Theme].mp3");
+
+        // reset time
+        set("time", 0);
+
         Node background = FXGL.getAssetLoader().loadTexture("background.jpg");
         background.setScaleX(5.0);
         background.setScaleY(5.0);
@@ -147,20 +152,22 @@ public class BasicGameApp extends GameApplication{
 
         }, Duration.seconds(0.5));
         // player swipes
-        getGameTimer().runAtInterval(() -> {
+        run(() -> {
             Entity swipe = spawn("swipe", new Point2D(player.getX() + 128, player.getY()));
             despawnWithDelay(swipe, Duration.millis(100));
-        }, Duration.millis(1000));
+        }, Duration.seconds(1));
+
+        run(() -> inc("time", + 1), Duration.seconds(1));
 
     }
 
 
     @Override
     protected void onUpdate(double tpf) {
-        timerText.setText("Time: " + (int) getGameTimer().getNow());
+        timerText.setText("Time: " + geti("time"));
 
         // game ends in 5 mins
-        if (getGameTimer().getNow() > 600) {
+        if (geti("time") > 600) {
             youWin();
         }
     }
@@ -205,6 +212,7 @@ public class BasicGameApp extends GameApplication{
         vars.put("score", 0);
         vars.put("coins", 0);
         vars.put("hp", 100);
+        vars.put("time", 0);
     }
 
     @Override
@@ -280,8 +288,10 @@ public class BasicGameApp extends GameApplication{
 
     void gameOver() {
         showMessage("You Lose!\nYour Score: " + geti("score"), () -> getGameController().gotoMainMenu());
+        getAudioPlayer().stopAllMusic();
     }
     void youWin() {
         showMessage("You Win!\nYour Score: " + geti("score"), () -> getGameController().gotoMainMenu());
+        getAudioPlayer().stopAllMusic();
     }
 }
