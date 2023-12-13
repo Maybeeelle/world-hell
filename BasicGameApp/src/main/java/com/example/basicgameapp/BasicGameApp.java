@@ -128,9 +128,7 @@ public class BasicGameApp extends GameApplication{
         run(() -> {
 
             if (player.getComponent(HealthComponent.class).getHealth() <= 0){
-//                getGameWorld().removeEntity(player);
-//                getSceneService().pushSubScene(gameOver);
-                getGameController().gotoMainMenu();
+                gameOver();
             }
 
             Entity zombie = spawn("zombie", new Point2D(-1,-1));
@@ -173,6 +171,7 @@ public class BasicGameApp extends GameApplication{
     @Override
     protected void onUpdate(double tpf) {
         timerText.setText("Time: " + (int) getGameTimer().getNow());
+        inc("score", +1);
 
         if (getGameTimer().getNow() > 600) {
             getGameController().gotoMainMenu();
@@ -224,7 +223,7 @@ public class BasicGameApp extends GameApplication{
     @Override
     protected void initGameVars(Map<String, Object> vars) {// creating a global variable named vars
         vars.put("pixelsMoved", 0);
-//        vars.put("playerPosition", player.getCenter());
+        vars.put("score", 0);
     }
 
     @Override
@@ -295,5 +294,9 @@ public class BasicGameApp extends GameApplication{
         ){
             getGameWorld().removeEntity(entity);
         }
+    }
+
+    void gameOver() {
+        showMessage("Your Score: " + geti("score"), () -> getGameController().gotoMainMenu());
     }
 }

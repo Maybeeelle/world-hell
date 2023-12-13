@@ -20,7 +20,7 @@ public class WorldHellMenu extends FXGLMenu {
         public WorldHellMenu(MenuType type) {
             super(type);
             //customizing menu,adding the background image of the menu here
-            setBackgroundImage(System.getProperty("user.dir") + "/src/main/resources/assets/textures/BG.png");
+//            setBackgroundImage(System.getProperty("user.dir") + "/src/main/resources/assets/textures/BG.png");
             //dito sana yung mga buttons chuchu
 
             var menuBox = new VBox(3, new MenuButton("New Game", () ->fireNewGame()));
