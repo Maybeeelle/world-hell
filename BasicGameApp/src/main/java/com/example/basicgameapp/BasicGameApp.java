@@ -81,6 +81,11 @@ public class BasicGameApp extends GameApplication{
 
 
     @Override
+    protected void onPreInit() {
+        loopBGM("Doom Eternal OST - The Only Thing They Fear Is You (Mick Gordon) [Doom Eternal Theme].mp3");
+    }
+
+    @Override
     protected void initGame(){
 
 //        getGameScene().setBackgroundColor(Paint.valueOf("gray"));
