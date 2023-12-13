@@ -14,6 +14,7 @@ import javafx.scene.image.Image;
 import javafx.scene.layout.*;
 import javafx.scene.paint.Color;
 
+import static com.almasb.fxgl.dsl.FXGLForKtKt.getDialogService;
 import static com.almasb.fxgl.dsl.FXGLForKtKt.getUIFactoryService;
 
 public class WorldHellMenu extends FXGLMenu {
@@ -25,6 +26,7 @@ public class WorldHellMenu extends FXGLMenu {
 
             var menuBox = new VBox(3,
                     new MenuButton("New Game", () ->fireNewGame()),
+                    new MenuButton("Credits", () -> showCredits()),
                     new MenuButton("Quit", () -> fireExit())
             );
             menuBox.setAlignment(Pos.TOP_CENTER);
@@ -48,6 +50,17 @@ public class WorldHellMenu extends FXGLMenu {
 
             getContentRoot().setBackground(backgroundWithImage);
 
+        }
+
+        private void showCredits() {
+            getDialogService().showMessageBox("Sprite assets: Maybelle Patetico\n" +
+                    "\n" +
+                    "Background assets: Google Stock Images\n" +
+                    "\n" +
+                    "BGM: Doom Eternal OST - The Only Thing They Fear Is You (Mick Gordon) [Doom Eternal Theme]\n" +
+                    "     \n" +
+                    "     https://www.youtube.com/watch?v=kpnW68Q8ltc\n" +
+                    "Made with FXGL by AlmasB");
         }
 
 
