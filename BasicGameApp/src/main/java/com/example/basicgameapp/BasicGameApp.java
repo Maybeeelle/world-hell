@@ -44,8 +44,6 @@ public class BasicGameApp extends GameApplication{
     private GameSettings settings;//pagdeclare kay player na may datatype na Entity
     private Entity player;
     private Text coinText;
-
-    private int coins=0;
     private Text timerText;
     private int timeSeconds = 60;
     @Override
@@ -90,17 +88,6 @@ public class BasicGameApp extends GameApplication{
 
 //        getGameScene().setBackgroundColor(Paint.valueOf("gray"));
 
-        timerText = FXGL.getUIFactoryService().newText("",Color.BLACK, 24.0);
-        timerText.setTranslateX(50);
-        timerText.setTranslateY(50);
-
-        //For the display of the coins count
-        coinText = FXGL.getUIFactoryService().newText("",Color.BLACK, 20.0);
-        coinText.setTranslateX(50);
-        coinText.setTranslateY(70);
-
-        FXGL.getGameScene().addUINode(timerText);
-        FXGL.getGameScene().addUINode(coinText);
 
 
         Node background = FXGL.getAssetLoader().loadTexture("background.jpg");
@@ -223,12 +210,26 @@ public class BasicGameApp extends GameApplication{
 
         FXGL.getGameScene().addUINode(label);
         FXGL.getGameScene().addUINode(textPixels); //add to the scene graph
+
+       //For the display of the coins count
+       coinText = FXGL.getUIFactoryService().newText("",Color.BLACK, 20.0);
+       coinText.setTranslateX(50);
+       coinText.setTranslateY(70);
+
+       timerText = FXGL.getUIFactoryService().newText("",Color.BLACK, 24.0);
+       timerText.setTranslateX(50);
+       timerText.setTranslateY(50);
+
+
+       FXGL.getGameScene().addUINode(timerText);
+       FXGL.getGameScene().addUINode(coinText);
    }
 
     @Override
     protected void initGameVars(Map<String, Object> vars) {// creating a global variable named vars
         vars.put("pixelsMoved", 0);
         vars.put("score", 0);
+        vars.put("coins", 0);
     }
 
     @Override
@@ -266,8 +267,8 @@ public class BasicGameApp extends GameApplication{
             protected void onCollisionBegin(Entity player, Entity coin){
                 //FXGL.play("eagle_death.wav");
                 FXGL.getGameWorld().removeEntity(coin);
-                coins= coins + 1;
-                coinText.setText("Coins: " + coins);
+                inc("coins", +1);
+                coinText.setText("Coins: " + geti("coins"));
 
 
             }
