@@ -27,16 +27,24 @@ public class WorldHellMenu extends FXGLMenu {
             //dito sana yung mga buttons chuchu
 
             ImageView iv = new ImageView(FXGL.image("BG.png"));
-            var menuBox = new VBox(3,
-                    new MenuButton("New Game", () ->fireNewGame()),
-                    new MenuButton("Credits", () -> showCredits()),
-                    new MenuButton("Quit", () -> fireExit())
+            var play = new VBox(3,
+                    new MenuButton(".          .", () ->fireNewGame())
+                    //new MenuButton("Credits", () -> showCredits())
+                    //new MenuButton("Quit", () -> fireExit())
             );
-            menuBox.setAlignment(Pos.TOP_CENTER);
-            menuBox.setTranslateX(getAppWidth() / 2.0 -125);
-            menuBox.setTranslateX(getAppHeight() / 2.0 -125);
 
-            getContentRoot().getChildren().addAll(iv, menuBox);
+            var quit = new VBox(3,
+                    new MenuButton(".          .", () -> fireExit())
+            );
+            //menuBox.setAlignment(Pos.TOP_CENTER);
+            play.setTranslateY(getAppWidth() / 2.0 + 140);
+            play.setTranslateX(getAppHeight() - 470);
+
+            quit.setTranslateY(getAppWidth() / 2.0 + 290);
+            quit.setTranslateX(getAppHeight() - 470);
+
+            getContentRoot().getChildren().addAll(iv, play, quit);
+
         }
 
         private void setBackgroundImage(String imagePath){
