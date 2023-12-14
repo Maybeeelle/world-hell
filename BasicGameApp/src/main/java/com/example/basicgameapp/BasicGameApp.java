@@ -68,8 +68,6 @@ public class BasicGameApp extends GameApplication{
     public static void main(String[] args){
         launch(args);                            //Lol nabasa ko na in a nutshell FXGL is a javafx application with game development features
     }
-
-
     public enum EntityType{                     //forda adding the collision detection
         PLAYER,
         EAGLE,
@@ -78,12 +76,9 @@ public class BasicGameApp extends GameApplication{
         BIRD,
         COIN
     }
-
-
     @Override
     protected void onPreInit() {
     }
-
     @Override
     protected void initGame(){
 

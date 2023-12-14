@@ -3,6 +3,7 @@ package com.example.basicgameapp;
 
 import com.almasb.fxgl.app.scene.FXGLMenu;
 import com.almasb.fxgl.app.scene.MenuType;
+import com.almasb.fxgl.dsl.FXGL;
 import javafx.beans.binding.Bindings;
 import javafx.beans.binding.StringBinding;
 import javafx.geometry.Pos;
@@ -11,6 +12,7 @@ import javafx.scene.Parent;
 import javafx.scene.control.Button;
 import javafx.scene.control.MenuButton;
 import javafx.scene.image.Image;
+import javafx.scene.image.ImageView;
 import javafx.scene.layout.*;
 import javafx.scene.paint.Color;
 
@@ -24,6 +26,7 @@ public class WorldHellMenu extends FXGLMenu {
 //            setBackgroundImage(System.getProperty("user.dir") + "/src/main/resources/assets/textures/BG.png");
             //dito sana yung mga buttons chuchu
 
+            ImageView iv = new ImageView(FXGL.image("BG.png"));
             var menuBox = new VBox(3,
                     new MenuButton("New Game", () ->fireNewGame()),
                     new MenuButton("Credits", () -> showCredits()),
@@ -33,7 +36,7 @@ public class WorldHellMenu extends FXGLMenu {
             menuBox.setTranslateX(getAppWidth() / 2.0 -125);
             menuBox.setTranslateX(getAppHeight() / 2.0 -125);
 
-            getContentRoot().getChildren().add(menuBox);
+            getContentRoot().getChildren().addAll(iv, menuBox);
         }
 
         private void setBackgroundImage(String imagePath){
