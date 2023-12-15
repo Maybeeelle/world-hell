@@ -1,5 +1,5 @@
 package com.example.basicgameapp;
-//import java.math.*;
+
 import com.almasb.fxgl.app.GameApplication;
 import com.almasb.fxgl.app.GameSettings;
 import com.almasb.fxgl.app.scene.FXGLMenu;
@@ -10,31 +10,17 @@ import com.almasb.fxgl.dsl.FXGL;
 import com.almasb.fxgl.entity.Entity;
 import com.almasb.fxgl.core.math.FXGLMath;
 import com.almasb.fxgl.entity.components.CollidableComponent;
-import com.almasb.fxgl.input.Input;
-import com.almasb.fxgl.input.UserAction;
-import com.almasb.fxgl.physics.BoundingShape;
 import com.almasb.fxgl.physics.CollisionHandler;
-import com.almasb.fxgl.physics.HitBox;
 import javafx.geometry.Point2D;
 import javafx.geometry.Rectangle2D;
-import javafx.scene.Group;
 import javafx.scene.Node;
-import javafx.scene.SubScene;
-import javafx.scene.control.Button;
-import javafx.scene.image.Image;
-import javafx.scene.image.ImageView;
-import javafx.scene.input.KeyCode;
-import javafx.scene.Scene;
 
-import javafx.scene.layout.VBox;
+import javafx.scene.input.KeyCode;
 import javafx.scene.paint.Color;
-import javafx.scene.paint.Paint;
-import javafx.scene.shape.Rectangle;
 import javafx.scene.text.Text;
 import javafx.util.Duration;
 
 import java.util.Map;
-import java.util.Timer;
 
 import static com.almasb.fxgl.dsl.FXGL.*;
 
@@ -276,6 +262,7 @@ public class BasicGameApp extends GameApplication{
 
     void initPosition(Entity entity) {
         entity.setPosition(FXGLMath.randomPoint(new Rectangle2D(-getAppWidth() * .9 - entity.getWidth() * .5,-getAppHeight() * .9 - entity.getHeight() * .8,getAppWidth() * 3, getAppHeight() * 3)));
+        // if enemy is in screen, remove that enemy
         if (entity.getX() < getAppWidth() + player.getRightX() && entity.getX() > player.getX() - getAppWidth() / 2.0
                 && entity.getY() > player.getBottomY() - getAppHeight() / 2.0 && entity.getY() < getAppHeight() + player.getY()
         ){

@@ -28,13 +28,15 @@ public class WorldHellMenu extends FXGLMenu {
 
             ImageView iv = new ImageView(FXGL.image("BG.png"));
             var play = new VBox(3,
-                    new MenuButton(".          .", () ->fireNewGame())
-                    //new MenuButton("Credits", () -> showCredits())
-                    //new MenuButton("Quit", () -> fireExit())
+                    new MenuButton(".          .", () -> fireNewGame())
             );
 
             var quit = new VBox(3,
                     new MenuButton(".          .", () -> fireExit())
+            );
+
+            var credits = new VBox(
+                    new MenuButton(".             .", () -> showCredits())
             );
             //menuBox.setAlignment(Pos.TOP_CENTER);
             play.setTranslateY(getAppWidth() / 2.0 + 140);
@@ -43,7 +45,10 @@ public class WorldHellMenu extends FXGLMenu {
             quit.setTranslateY(getAppWidth() / 2.0 + 290);
             quit.setTranslateX(getAppHeight() - 470);
 
-            getContentRoot().getChildren().addAll(iv, play, quit);
+            credits.setTranslateY(610);
+            credits.setTranslateX(475);
+
+            getContentRoot().getChildren().addAll(iv, play, quit, credits);
 
         }
 
