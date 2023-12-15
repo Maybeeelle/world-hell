@@ -276,8 +276,8 @@ public class BasicGameApp extends GameApplication{
 
     void initPosition(Entity entity) {
         entity.setPosition(FXGLMath.randomPoint(new Rectangle2D(-getAppWidth() * .9 - entity.getWidth() * .5,-getAppHeight() * .9 - entity.getHeight() * .8,getAppWidth() * 3, getAppHeight() * 3)));
-        if (entity.getX() < getAppWidth() && entity.getX() > 0
-                && entity.getY() > 0 && entity.getY() < getAppHeight()
+        if (entity.getX() < getAppWidth() + player.getRightX() && entity.getX() > player.getX() - getAppWidth() / 2.0
+                && entity.getY() > player.getBottomY() - getAppHeight() / 2.0 && entity.getY() < getAppHeight() + player.getY()
         ){
             getGameWorld().removeEntity(entity);
         }
