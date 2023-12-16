@@ -2,16 +2,16 @@ package com.example.basicgameapp;
 
 import com.almasb.fxgl.app.GameApplication;
 import com.almasb.fxgl.app.GameSettings;
-import com.almasb.fxgl.app.scene.FXGLMenu;
-import com.almasb.fxgl.app.scene.GameView;
-import com.almasb.fxgl.app.scene.MenuType;
-import com.almasb.fxgl.app.scene.SceneFactory;
+import com.almasb.fxgl.app.scene.*;
 import com.almasb.fxgl.dsl.FXGL;
 import com.almasb.fxgl.entity.Entity;
 import com.almasb.fxgl.core.math.FXGLMath;
 import com.almasb.fxgl.entity.components.CollidableComponent;
 import com.almasb.fxgl.physics.CollisionHandler;
+import com.almasb.fxgl.ui.Position;
+import com.almasb.fxgl.ui.ProgressBar;
 import javafx.geometry.Point2D;
+import javafx.geometry.Pos;
 import javafx.geometry.Rectangle2D;
 import javafx.scene.Node;
 
@@ -29,6 +29,7 @@ public class BasicGameApp extends GameApplication{
     private Entity player;
     private Text coinText;
     private Text timerText;
+    private Text hpText;
     @Override
     protected void initSettings(GameSettings settings){
                                                 //sa Windows nung game 600 X2 600 na siya
@@ -91,13 +92,17 @@ public class BasicGameApp extends GameApplication{
 
         player.translate(new Point2D(player.getWidth() / 2.0,player.getHeight() / 2.0 ));
 
-        getGameScene().getViewport().bindToEntity(player, player.getX() - player.getWidth(), player.getY() - player.getHeight());
-        getGameScene().getViewport().setBounds(-1266, -1865, 1266, 1865);
+//        getGameScene().getViewport().bindToEntity(player, player.getX() - player.getWidth(), player.getY() - player.getHeight());
+//        getGameScene().getViewport().setBounds(-1266, -1865, 1266, 1865);
+
+        Viewport viewport = getGameScene().getViewport();
+        viewport.setBounds(-1266, -1865, 1266, 1865);
+        viewport.bindToEntity(player, getAppWidth() / 2.0 - player.getWidth() / 2, getAppHeight() / 2.0 - player.getHeight() / 2);
 
         getGameWorld().addEntityFactory(new Factory());
 
-        run(() -> {
 
+        run(() -> {
             // player death
             if (geti("hp") <= 0){
                 // score = coins / time + time
@@ -146,6 +151,7 @@ public class BasicGameApp extends GameApplication{
 
     @Override
     protected void onUpdate(double tpf) {
+        hpText.setText(String.valueOf(geti("hp")));
         timerText.setText("Time: " + geti("time"));
 
         // game ends in 5 mins
@@ -184,9 +190,15 @@ public class BasicGameApp extends GameApplication{
        timerText.setTranslateX(50);
        timerText.setTranslateY(50);
 
+       hpText = FXGL.getUIFactoryService().newText("",Color.BLACK, 24.0);
+       hpText.setTranslateX(50);
+       hpText.setTranslateY(90);
+
+       hpText.setText(String.valueOf(geti("hp")));
 
        FXGL.getGameScene().addUINode(timerText);
        FXGL.getGameScene().addUINode(coinText);
+       FXGL.getGameScene().addUINode(hpText);
    }
 
     @Override
