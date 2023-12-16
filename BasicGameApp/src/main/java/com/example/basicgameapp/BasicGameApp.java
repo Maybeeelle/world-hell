@@ -35,6 +35,8 @@ public class BasicGameApp extends GameApplication{
     private Text coinText;
     private Text timerText;
     private Text hpText;
+
+    private ProgressBar coins;
     @Override
     protected void initSettings(GameSettings settings){
                                                 //sa Windows nung game 600 X2 600 na siya
@@ -151,7 +153,7 @@ public class BasicGameApp extends GameApplication{
                 despawnWithDelay(swipe2, Duration.millis(100));
             }
             despawnWithDelay(swipe, Duration.millis(100));
-        }, Duration.seconds(1));
+        }, Duration.seconds(1.0 / geti("hangerLevel")));
 
         run(() -> inc("time", + 1), Duration.seconds(1));
 
@@ -160,6 +162,7 @@ public class BasicGameApp extends GameApplication{
 
     @Override
     protected void onUpdate(double tpf) {
+        coins.setCurrentValue(geti("coins"));
         hpText.setText(String.valueOf(geti("hp")));
         timerText.setText("Time: " + geti("time"));
 
@@ -169,16 +172,14 @@ public class BasicGameApp extends GameApplication{
         }
 
         if (geti("coins") >= 10) {
-            // testing if double hanger works
-            inc("hangerLevel", +1);
             levelUp();
-//            set("coins", 0);
+            set("coins", 0);
         }
     }
 
     void levelUp() {
         // TODO: FIX THIS SHIT
-//        getGameController().pauseEngine();
+        getGameController().pauseEngine();
         var vbox = new VBox(1);
 
         // TODO: make a level up menu
@@ -189,12 +190,15 @@ public class BasicGameApp extends GameApplication{
         choice1.setOnMouseClicked(e -> {
             inc("hangerLevel", +1);
             vbox.setVisible(false);
-//            getGameController().resumeEngine();
+            getGameController().resumeEngine();
         });
 
         vbox.getChildren().add(choice1);
 
-        addUINode(vbox, player.getCenter().getX(), player.getCenter().getY());
+        vbox.setTranslateX(getAppWidth() / 2.0 - vbox.getWidth() * 2.0);
+        vbox.setTranslateY(getAppHeight() / 2.0 - vbox.getHeight() / 2.0);
+
+        getGameScene().addChild(vbox);
     }
 
     @Override
@@ -233,9 +237,17 @@ public class BasicGameApp extends GameApplication{
 
        hpText.setText(String.valueOf(geti("hp")));
 
+       coins = new ProgressBar();
+       coins.setMaxValue(10);
+       coins.setMinValue(0);
+       coins.setWidth(getAppWidth());
+       coins.setHeight(20);
+       coins.setFill(Color.GOLD);
+
        FXGL.getGameScene().addUINode(timerText);
        FXGL.getGameScene().addUINode(coinText);
        FXGL.getGameScene().addUINode(hpText);
+       addUINode(coins, 0,0 );
    }
 
     @Override
@@ -245,6 +257,7 @@ public class BasicGameApp extends GameApplication{
         vars.put("hp", 100);
         vars.put("time", 0);
         vars.put("hangerLevel", 1);
+        vars.put("hangerSpeed", 1);
     }
 
     @Override
