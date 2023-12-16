@@ -79,9 +79,9 @@ public class BasicGameApp extends GameApplication{
         // reset time
         set("time", 0);
 
-        Node background = FXGL.getAssetLoader().loadTexture("background.jpg");
-        background.setScaleX(5.0);
-        background.setScaleY(5.0);
+        Node background = FXGL.getAssetLoader().loadTexture("bloody_paper2.jpg");
+        background.setScaleX(4.0);
+        background.setScaleY(4.0);
 
         GameView backgroundView = new GameView(background, 0);
 
