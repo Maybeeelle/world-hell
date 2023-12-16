@@ -8,6 +8,7 @@ import com.almasb.fxgl.entity.Entity;
 import com.almasb.fxgl.core.math.FXGLMath;
 import com.almasb.fxgl.entity.components.CollidableComponent;
 import com.almasb.fxgl.physics.CollisionHandler;
+import com.almasb.fxgl.ui.FXGLButton;
 import com.almasb.fxgl.ui.Position;
 import com.almasb.fxgl.ui.ProgressBar;
 import javafx.geometry.Point2D;
@@ -15,7 +16,11 @@ import javafx.geometry.Pos;
 import javafx.geometry.Rectangle2D;
 import javafx.scene.Node;
 
+import javafx.scene.control.Button;
+import javafx.scene.control.Label;
+import javafx.scene.control.MenuButton;
 import javafx.scene.input.KeyCode;
+import javafx.scene.layout.VBox;
 import javafx.scene.paint.Color;
 import javafx.scene.text.Text;
 import javafx.util.Duration;
@@ -109,7 +114,7 @@ public class BasicGameApp extends GameApplication{
                 set("score", geti("coins") / (int) getGameTimer().getNow() * 100 + (int) getGameTimer().getNow());
                 gameOver();
             }
-
+            
             Entity zombie = spawn("zombie", new Point2D(-1,-1));
             Entity eagle = spawn("eagle", new Point2D(-1,-1));
             Entity bird = spawn("bird", new Point2D(-1,-1));
@@ -141,6 +146,10 @@ public class BasicGameApp extends GameApplication{
         // player swipes
         run(() -> {
             Entity swipe = spawn("swipe", new Point2D(player.getX() + 128, player.getY()));
+            if (geti("hangerLevel") >= 2){
+                Entity swipe2 = spawn("swipe", new Point2D(player.getX() - 128, player.getY()));
+                despawnWithDelay(swipe2, Duration.millis(100));
+            }
             despawnWithDelay(swipe, Duration.millis(100));
         }, Duration.seconds(1));
 
@@ -158,6 +167,34 @@ public class BasicGameApp extends GameApplication{
         if (geti("time") >= 600) {
             youWin();
         }
+
+        if (geti("coins") >= 10) {
+            // testing if double hanger works
+            inc("hangerLevel", +1);
+            levelUp();
+//            set("coins", 0);
+        }
+    }
+
+    void levelUp() {
+        // TODO: FIX THIS SHIT
+//        getGameController().pauseEngine();
+        var vbox = new VBox(1);
+
+        // TODO: make a level up menu
+        var choice1 = new FXGLButton("Upgrade Hanger");
+
+        choice1.setTextFill(Color.BLACK);
+        choice1.setText("Upgrade Hanger");
+        choice1.setOnMouseClicked(e -> {
+            inc("hangerLevel", +1);
+            vbox.setVisible(false);
+//            getGameController().resumeEngine();
+        });
+
+        vbox.getChildren().add(choice1);
+
+        addUINode(vbox, player.getCenter().getX(), player.getCenter().getY());
     }
 
     @Override
@@ -207,6 +244,7 @@ public class BasicGameApp extends GameApplication{
         vars.put("coins", 0);
         vars.put("hp", 100);
         vars.put("time", 0);
+        vars.put("hangerLevel", 1);
     }
 
     @Override
