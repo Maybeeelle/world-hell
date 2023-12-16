@@ -257,6 +257,7 @@ public class BasicGameApp extends GameApplication{
             protected void onCollisionBegin(Entity player, Entity zombie){
                 // TODO: make a damage component of zombie
                 inc("hp", -10);
+                getGameScene().getViewport().shakeTranslational(5);
                 play("ai.wav");
             }
         });
@@ -267,6 +268,7 @@ public class BasicGameApp extends GameApplication{
             protected void onCollisionBegin(Entity player, Entity eagle){
                 // damage player
                 inc("hp", -10);
+                getGameScene().getViewport().shakeTranslational(5);
                 play("ai.wav");
             }
         });
