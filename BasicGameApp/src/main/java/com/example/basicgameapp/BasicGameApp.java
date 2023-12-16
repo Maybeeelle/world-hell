@@ -314,7 +314,8 @@ public class BasicGameApp extends GameApplication{
             protected void onCollisionBegin(Entity swipe, Entity eagle){
                 FXGL.play("eagle_death.wav");
                 FXGL.getGameWorld().removeEntity(eagle);
-                Entity coin = spawn("coin", eagle.getPosition());
+                if (FXGLMath.randomBoolean())
+                    spawn("coin", eagle.getPosition());
 
             }
         });
@@ -335,7 +336,8 @@ public class BasicGameApp extends GameApplication{
             protected void onCollisionBegin(Entity swipe, Entity zombie){
                 FXGL.play("slayy.wav");
                 FXGL.getGameWorld().removeEntity(zombie);
-                Entity coin = spawn("coin", zombie.getPosition());
+                if (FXGLMath.randomBoolean())
+                    spawn("coin", zombie.getPosition());
 
             }
         });
@@ -344,7 +346,8 @@ public class BasicGameApp extends GameApplication{
             protected void onCollisionBegin(Entity swipe, Entity bird){
                 FXGL.play("eagle_death.wav");
                 FXGL.getGameWorld().removeEntity(bird);
-                Entity coin = spawn("coin", bird.getPosition());
+                if (FXGLMath.randomBoolean())
+                    spawn("coin", bird.getPosition());
             }
         });
     }
