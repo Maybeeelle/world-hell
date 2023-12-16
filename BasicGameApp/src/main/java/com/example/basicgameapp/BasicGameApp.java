@@ -32,9 +32,10 @@ import static com.almasb.fxgl.dsl.FXGL.*;
 public class BasicGameApp extends GameApplication{
 
     private Entity player;
-    private Text coinText;
+//    private Text coinText;
     private Text timerText;
-    private Text hpText;
+
+    private ProgressBar hpBar;
 
     private ProgressBar coins;
     @Override
@@ -162,8 +163,9 @@ public class BasicGameApp extends GameApplication{
 
     @Override
     protected void onUpdate(double tpf) {
-        coins.setCurrentValue(geti("coins"));
-        hpText.setText(String.valueOf(geti("hp")));
+        coins.setCurrentValue(geti ("coins"));
+        hpBar.setCurrentValue(geti("hp"));
+//        hpText.setText(String.valueOf(geti("hp")));
         timerText.setText("Time: " + geti("time"));
 
         // game ends in 5 mins
@@ -180,10 +182,12 @@ public class BasicGameApp extends GameApplication{
     void levelUp() {
         // TODO: FIX THIS SHIT
         getGameController().pauseEngine();
-        var vbox = new VBox(1);
+        var vbox = new VBox(3);
 
         // TODO: make a level up menu
         var choice1 = new FXGLButton("Upgrade Hanger");
+        var choice2 = new FXGLButton("Heal");
+
 
         choice1.setTextFill(Color.BLACK);
         choice1.setText("Upgrade Hanger");
@@ -193,7 +197,19 @@ public class BasicGameApp extends GameApplication{
             getGameController().resumeEngine();
         });
 
-        vbox.getChildren().add(choice1);
+        choice2.setTextFill(Color.BLACK);
+        choice2.setOnMouseClicked(e -> {
+            var healthHeal = 30;
+            if (geti("hp") < 100 - healthHeal)
+                inc("hp", + healthHeal);
+            else
+                set("hp", 100);
+            vbox.setVisible(false);
+            getGameController().resumeEngine();
+        });
+
+
+        vbox.getChildren().addAll(choice1, choice2);
 
         vbox.setTranslateX(getAppWidth() / 2.0 - vbox.getWidth() * 2.0);
         vbox.setTranslateY(getAppHeight() / 2.0 - vbox.getHeight() / 2.0);
@@ -223,19 +239,19 @@ public class BasicGameApp extends GameApplication{
    @Override
     protected void initUI(){
        //For the display of the coins count
-       coinText = FXGL.getUIFactoryService().newText("",Color.BLACK, 20.0);
-       coinText.setTranslateX(50);
-       coinText.setTranslateY(70);
+//       coinText = FXGL.getUIFactoryService().newText("",Color.BLACK, 20.0);
+//       coinText.setTranslateX(50);
+//       coinText.setTranslateY(70);
 
        timerText = FXGL.getUIFactoryService().newText("",Color.BLACK, 24.0);
        timerText.setTranslateX(50);
        timerText.setTranslateY(50);
 
-       hpText = FXGL.getUIFactoryService().newText("",Color.BLACK, 24.0);
-       hpText.setTranslateX(50);
-       hpText.setTranslateY(90);
-
-       hpText.setText(String.valueOf(geti("hp")));
+//       hpText = FXGL.getUIFactoryService().newText("",Color.BLACK, 24.0);
+//       hpText.setTranslateX(50);
+//       hpText.setTranslateY(90);
+//
+//       hpText.setText(String.valueOf(geti("hp")));
 
        coins = new ProgressBar();
        coins.setMaxValue(10);
@@ -244,10 +260,18 @@ public class BasicGameApp extends GameApplication{
        coins.setHeight(20);
        coins.setFill(Color.GOLD);
 
+       hpBar = new ProgressBar();
+       hpBar.setMaxValue(100);
+       hpBar.setMinValue(0);
+       hpBar.setWidth(player.getWidth());
+       hpBar.setHeight(10);
+       hpBar.setFill(Color.RED);
+
        FXGL.getGameScene().addUINode(timerText);
-       FXGL.getGameScene().addUINode(coinText);
-       FXGL.getGameScene().addUINode(hpText);
+//       FXGL.getGameScene().addUINode(coinText);
+//       FXGL.getGameScene().addUINode(hpText);
        addUINode(coins, 0,0 );
+       addUINode(hpBar, player.getX() - hpBar.getBackgroundBar().getWidth(), player.getY() + 10);
    }
 
     @Override
@@ -301,7 +325,7 @@ public class BasicGameApp extends GameApplication{
                 //FXGL.play("eagle_death.wav");
                 FXGL.getGameWorld().removeEntity(coin);
                 inc("coins", +1);
-                coinText.setText("Coins: " + geti("coins"));
+//                coinText.setText("Coins: " + geti("coins"));
 
 
             }
