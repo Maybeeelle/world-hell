@@ -172,7 +172,7 @@ public class BasicGameApp extends GameApplication{
             youWin();
         }
 
-        if (geti("coins") >= 10) {
+        if (geti("coins") >= geti("coin_trigger")) {
             levelUp();
             set("coins", 0);
         }
@@ -204,6 +204,8 @@ public class BasicGameApp extends GameApplication{
             inc("hangerLevel", +1);
             vbox.setVisible(false);
             isPaused = false;
+            inc("coin_trigger", +10);
+            coins.setMaxValue(geti("coin_trigger"));
             getGameController().resumeEngine();
         });
 
@@ -216,6 +218,8 @@ public class BasicGameApp extends GameApplication{
                 set("hp", 100);
             vbox.setVisible(false);
             isPaused = false;
+            inc("coin_trigger", +10);
+            coins.setMaxValue(geti("coin_trigger"));
             getGameController().resumeEngine();
         });
 
@@ -293,6 +297,7 @@ public class BasicGameApp extends GameApplication{
         vars.put("time", 0);
         vars.put("hangerLevel", 1);
         vars.put("hangerSpeed", 1);
+        vars.put("coin_trigger", 10);
     }
 
     @Override
