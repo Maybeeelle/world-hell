@@ -74,15 +74,13 @@ public class BasicGameApp extends GameApplication{
     }
     @Override
     protected void onPreInit() {
+        loopBGM("Rip & Tear Doom OST.mp3");
         getSettings().setGlobalMusicVolume(0.2);
         getSettings().setGlobalSoundVolume(0.5);
     }
     @Override
     protected void initGame(){
-
-        loopBGM("Doom Eternal OST - The Only Thing They Fear Is You (Mick Gordon) [Doom Eternal Theme].mp3");
-        // lower bgm volume
-
+        loopBGM("Rip & Tear Doom OST.mp3");
 
         // reset time
         set("time", 0);
@@ -148,6 +146,7 @@ public class BasicGameApp extends GameApplication{
         // player swipes
         run(() -> {
             Entity swipe = spawn("swipe", new Point2D(player.getX() + 128, player.getY()));
+            play("swipe.wav");
             if (geti("hangerLevel") >= 2){
                 Entity swipe2 = spawn("swipe", new Point2D(player.getX() - 128, player.getY()));
                 despawnWithDelay(swipe2, Duration.millis(100));
@@ -168,7 +167,7 @@ public class BasicGameApp extends GameApplication{
         timerText.setText("Time: " + geti("time"));
 
         // game ends in 5 mins
-        if (geti("time") >= 600) {
+        if (geti("time") >= 300) {
             youWin();
         }
 
@@ -310,8 +309,8 @@ public class BasicGameApp extends GameApplication{
             protected void onCollisionBegin(Entity player, Entity zombie){
                 // TODO: make a damage component of zombie
                 inc("hp", -10);
-                getGameScene().getViewport().shakeTranslational(5);
-                play("ai.wav");
+                getGameScene().getViewport().shakeTranslational(20);
+                play("player_pain.wav");
             }
         });
 
@@ -321,8 +320,8 @@ public class BasicGameApp extends GameApplication{
             protected void onCollisionBegin(Entity player, Entity eagle){
                 // damage player
                 inc("hp", -10);
-                getGameScene().getViewport().shakeTranslational(5);
-                play("ai.wav");
+                getGameScene().getViewport().shakeTranslational(20);
+                play("player_pain.wav");
             }
         });
         FXGL.getPhysicsWorld().addCollisionHandler(new CollisionHandler(EntityType.SWIPE, EntityType.EAGLE) {
@@ -379,11 +378,17 @@ public class BasicGameApp extends GameApplication{
     }
 
     void gameOver() {
-        showMessage("You Lose!\nYour Score: " + geti("score"), () -> getGameController().gotoMainMenu());
         getAudioPlayer().stopAllMusic();
+        showMessage("You Lose!\nYour Score: " + geti("score"), () -> {
+            getGameController().gotoMainMenu();
+            loopBGM("Rip & Tear Doom OST.mp3");
+        });
     }
     void youWin() {
-        showMessage("You Win!\nYour Score: " + geti("score"), () -> getGameController().gotoMainMenu());
         getAudioPlayer().stopAllMusic();
+        showMessage("You WIN!\nYour Score: " + geti("score"), () -> {
+            getGameController().gotoMainMenu();
+            loopBGM("Rip & Tear Doom OST.mp3");
+        });
     }
 }

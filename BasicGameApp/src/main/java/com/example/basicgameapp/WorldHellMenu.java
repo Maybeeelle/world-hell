@@ -16,12 +16,13 @@ import javafx.scene.image.ImageView;
 import javafx.scene.layout.*;
 import javafx.scene.paint.Color;
 
-import static com.almasb.fxgl.dsl.FXGLForKtKt.getDialogService;
-import static com.almasb.fxgl.dsl.FXGLForKtKt.getUIFactoryService;
+import static com.almasb.fxgl.dsl.FXGLForKtKt.*;
 
 public class WorldHellMenu extends FXGLMenu {
         public WorldHellMenu(MenuType type) {
             super(type);
+
+            getAudioPlayer().resumeAllMusic();
             //customizing menu,adding the background image of the menu here
 //            setBackgroundImage(System.getProperty("user.dir") + "/src/main/resources/assets/textures/BG.png");
             //dito sana yung mga buttons chuchu
@@ -92,7 +93,9 @@ public class WorldHellMenu extends FXGLMenu {
                                 .otherwise(Color.BLACK)
                 );
 
-                setOnMouseClicked(e -> action.run());
+                setOnMouseClicked(e ->{
+                    action.run();
+                });
                 setPickOnBounds(true);
                 getChildren().add(text);
             }
