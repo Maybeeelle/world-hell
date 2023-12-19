@@ -22,17 +22,20 @@ import javafx.scene.control.MenuButton;
 import javafx.scene.input.KeyCode;
 import javafx.scene.layout.VBox;
 import javafx.scene.paint.Color;
+import javafx.scene.text.Font;
 import javafx.scene.text.Text;
+import javafx.stage.Stage;
 import javafx.util.Duration;
-
+import javafx.scene.text.Font;
 import java.util.Map;
 
+import static com.almasb.fxgl.dsl.FXGLForKtKt.getUIFactoryService;
 import static com.almasb.fxgl.dsl.FXGL.*;
 
 public class BasicGameApp extends GameApplication{
 
     private Entity player;
-//    private Text coinText;
+    //    private Text coinText;
     private Text timerText;
 
     private ProgressBar hpBar;
@@ -41,7 +44,7 @@ public class BasicGameApp extends GameApplication{
     private Boolean isPaused = false;
     @Override
     protected void initSettings(GameSettings settings){
-                                                //sa Windows nung game 600 X2 600 na siya
+        //sa Windows nung game 600 X2 600 na siya
         settings.setWidth(800);
         settings.setHeight(800);
         settings.setTitle("WorldHELL 0 ");
@@ -70,7 +73,8 @@ public class BasicGameApp extends GameApplication{
         ZOMBIE,
         SWIPE,
         BIRD,
-        COIN
+        COIN,
+        YOULOSE
     }
     @Override
     protected void onPreInit() {
@@ -115,6 +119,8 @@ public class BasicGameApp extends GameApplication{
         getGameWorld().addEntityFactory(new Factory());
 
 
+
+        //spawning xombies at any random points and making them chase the player
         run(() -> {
 
             Entity zombie = spawn("zombie", new Point2D(-1,-1));
@@ -251,16 +257,16 @@ public class BasicGameApp extends GameApplication{
         });
     }
 
-   @Override
+    @Override
     protected void initUI(){
-       //For the display of the coins count
+        //For the display of the coins count
 //       coinText = FXGL.getUIFactoryService().newText("",Color.BLACK, 20.0);
 //       coinText.setTranslateX(50);
 //       coinText.setTranslateY(70);
 
-       timerText = FXGL.getUIFactoryService().newText("",Color.BLACK, 24.0);
-       timerText.setTranslateX(50);
-       timerText.setTranslateY(50);
+        timerText = FXGL.getUIFactoryService().newText("",Color.BLACK, 24.0);
+        timerText.setTranslateX(50);
+        timerText.setTranslateY(50);
 
 //       hpText = FXGL.getUIFactoryService().newText("",Color.BLACK, 24.0);
 //       hpText.setTranslateX(50);
@@ -268,26 +274,26 @@ public class BasicGameApp extends GameApplication{
 //
 //       hpText.setText(String.valueOf(geti("hp")));
 
-       coins = new ProgressBar();
-       coins.setMaxValue(10);
-       coins.setMinValue(0);
-       coins.setWidth(getAppWidth());
-       coins.setHeight(20);
-       coins.setFill(Color.GOLD);
+        coins = new ProgressBar();
+        coins.setMaxValue(10);
+        coins.setMinValue(0);
+        coins.setWidth(getAppWidth());
+        coins.setHeight(20);
+        coins.setFill(Color.GOLD);
 
-       hpBar = new ProgressBar();
-       hpBar.setMaxValue(100);
-       hpBar.setMinValue(0);
-       hpBar.setWidth(player.getWidth());
-       hpBar.setHeight(10);
-       hpBar.setFill(Color.RED);
+        hpBar = new ProgressBar();
+        hpBar.setMaxValue(100);
+        hpBar.setMinValue(0);
+        hpBar.setWidth(player.getWidth());
+        hpBar.setHeight(10);
+        hpBar.setFill(Color.RED);
 
-       FXGL.getGameScene().addUINode(timerText);
+        FXGL.getGameScene().addUINode(timerText);
 //       FXGL.getGameScene().addUINode(coinText);
 //       FXGL.getGameScene().addUINode(hpText);
-       addUINode(coins, 0,0 );
-       addUINode(hpBar, player.getX() - hpBar.getBackgroundBar().getWidth(), player.getY() + 10);
-   }
+        addUINode(coins, 0,0 );
+        addUINode(hpBar, player.getX() - hpBar.getBackgroundBar().getWidth(), player.getY() + 10);
+    }
 
     @Override
     protected void initGameVars(Map<String, Object> vars) {// creating a global variable named vars
@@ -379,11 +385,40 @@ public class BasicGameApp extends GameApplication{
     }
 
     void gameOver() {
-        showMessage("You Lose!\nYour Score: " + geti("score"), () -> getGameController().gotoMainMenu());
+
+
+        Font.loadFont("https://C:/Users/majah/Downloads/solstice-of-suffering-font/Solsticeofsuffering-wonn.ttf",12);
+        // Display an image in the dialog
+        var image = FXGL.texture("skull.png");
+        image.setFitWidth(300);
+        image.setFitHeight(300);
+        // Create a VBox to hold the image and a message
+        VBox vbox = new VBox(10);
+        vbox.setAlignment(Pos.CENTER);
+        Label showMess=  new Label("   You Lose!\nYour Score: " + geti("score"));
+        showMess.setTextFill(Color.WHITE);
+        showMess.setFont(Font.font(35));
+        vbox.getChildren().addAll(image, showMess);
+
+        Button goMain= FXGL.getUIFactoryService().newButton("Main Menu");
+
+
+        // Show the dialog with the image and message
+        FXGL.getDialogService().showBox("Game Over", vbox, goMain);
+        goMain.setOnAction(event -> {
+
+
+            // Go back to the WorldHellMenu
+            getGameController().gotoMainMenu();
+        });
         getAudioPlayer().stopAllMusic();
+
+
+
     }
     void youWin() {
         showMessage("You Win!\nYour Score: " + geti("score"), () -> getGameController().gotoMainMenu());
         getAudioPlayer().stopAllMusic();
     }
+
 }

@@ -64,4 +64,14 @@ public class Factory implements EntityFactory {
                 .build();
     }
 
+    @Spawns("youLose")
+    public Entity youLoseBG(SpawnData data) {
+        return FXGL.entityBuilder(data)
+                .type(BasicGameApp.EntityType.YOULOSE)
+                //.view("zombie_final.png")
+                .viewWithBBox("YLOSE.png")
+                //.with(new ProjectileComponent(new Point2D(0, 0), 500))
+                .build();
+    }
+
 }
