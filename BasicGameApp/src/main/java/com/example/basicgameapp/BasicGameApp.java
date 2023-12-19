@@ -70,7 +70,8 @@ public class BasicGameApp extends GameApplication{
         ZOMBIE,
         SWIPE,
         BIRD,
-        COIN
+        COIN,
+        BOSSJOSHUA
     }
     @Override
     protected void onPreInit() {
@@ -118,6 +119,23 @@ public class BasicGameApp extends GameApplication{
             Entity zombie = spawn("zombie", new Point2D(-1,-1));
             Entity eagle = spawn("eagle", new Point2D(-1,-1));
             Entity bird = spawn("bird", new Point2D(-1,-1));
+
+            // spawn boss joshua if time is 4 mins
+            if (geti("time") >= 20) {
+                Entity bossJoshua = spawn("bossJoshua", new Point2D(-1,-1));
+                initPosition(bossJoshua);
+                bossJoshua.setRotation(8d);
+                run(() -> {
+                    Point2D playerCenter = player.getCenter().subtract(player.getWidth(), player.getHeight());
+
+                    bossJoshua.translateTowards(player.getCenter().subtract(zombie.getWidth()/2.0, zombie.getHeight()/2.0), 3);
+
+                }, Duration.seconds(0));
+
+                run(() -> {
+                    bossJoshua.setRotation(bossJoshua.getRotation() * -1);
+                }, Duration.millis(400));
+            }
 
             initPosition(zombie);
             initPosition(eagle);
@@ -324,6 +342,17 @@ public class BasicGameApp extends GameApplication{
                 play("player_pain.wav");
             }
         });
+
+        // Collision handler for bossJoshua
+        FXGL.getPhysicsWorld().addCollisionHandler(new CollisionHandler(EntityType.PLAYER, EntityType.BOSSJOSHUA) {
+            @Override
+            protected void onCollision(Entity player, Entity bossJoshua){
+                // damage player
+                inc("hp", -1);
+                getGameScene().getViewport().shakeTranslational(20);
+                play("player_pain.wav");
+            }
+        });
         FXGL.getPhysicsWorld().addCollisionHandler(new CollisionHandler(EntityType.SWIPE, EntityType.EAGLE) {
             @Override
             protected void onCollisionBegin(Entity swipe, Entity eagle){
@@ -363,6 +392,19 @@ public class BasicGameApp extends GameApplication{
                 FXGL.getGameWorld().removeEntity(bird);
                 if (FXGLMath.randomBoolean())
                     spawn("coin", bird.getPosition());
+            }
+        });
+
+        FXGL.getPhysicsWorld().addCollisionHandler(new CollisionHandler(EntityType.SWIPE, EntityType.BOSSJOSHUA) {
+            @Override
+            protected void onCollisionBegin(Entity swipe, Entity bossJoshua){
+                FXGL.play("joshua_laugh.wav");
+                // 50% chance to kill boss joshua
+                if (FXGLMath.randomBoolean()){
+                    FXGL.play("tangina_mo.wav");
+                    FXGL.getGameWorld().removeEntity(bossJoshua);
+                    spawn("coin", bossJoshua.getPosition());
+                }
             }
         });
     }
