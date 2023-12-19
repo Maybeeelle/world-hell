@@ -111,13 +111,7 @@ public class BasicGameApp extends GameApplication{
 
 
         run(() -> {
-            // player death
-            if (geti("hp") <= 0){
-                // score = coins / time + time
-                set("score", geti("coins") / (int) getGameTimer().getNow() * 100 + (int) getGameTimer().getNow());
-                gameOver();
-            }
-            
+
             Entity zombie = spawn("zombie", new Point2D(-1,-1));
             Entity eagle = spawn("eagle", new Point2D(-1,-1));
             Entity bird = spawn("bird", new Point2D(-1,-1));
@@ -176,6 +170,12 @@ public class BasicGameApp extends GameApplication{
         if (geti("coins") >= 10) {
             levelUp();
             set("coins", 0);
+        }
+        // player death
+        if (geti("hp") <= 0){
+            // score = coins / time + time
+            set("score", geti("coins") / (int) getGameTimer().getNow() * 100 + (int) getGameTimer().getNow() / 10);
+            gameOver();
         }
     }
 
