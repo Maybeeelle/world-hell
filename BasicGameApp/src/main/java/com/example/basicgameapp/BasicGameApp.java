@@ -38,6 +38,7 @@ public class BasicGameApp extends GameApplication{
     private ProgressBar hpBar;
 
     private ProgressBar coins;
+    private Boolean isPaused = false;
     @Override
     protected void initSettings(GameSettings settings){
                                                 //sa Windows nung game 600 X2 600 na siya
@@ -73,11 +74,15 @@ public class BasicGameApp extends GameApplication{
     }
     @Override
     protected void onPreInit() {
+        getSettings().setGlobalMusicVolume(0.2);
+        getSettings().setGlobalSoundVolume(0.5);
     }
     @Override
     protected void initGame(){
 
         loopBGM("Doom Eternal OST - The Only Thing They Fear Is You (Mick Gordon) [Doom Eternal Theme].mp3");
+        // lower bgm volume
+
 
         // reset time
         set("time", 0);
@@ -181,6 +186,10 @@ public class BasicGameApp extends GameApplication{
 
     void levelUp() {
         // TODO: FIX THIS SHIT
+        if (isPaused) {
+            return;
+        }
+        isPaused = true;
         getGameController().pauseEngine();
         var vbox = new VBox(3);
 
@@ -194,6 +203,7 @@ public class BasicGameApp extends GameApplication{
         choice1.setOnMouseClicked(e -> {
             inc("hangerLevel", +1);
             vbox.setVisible(false);
+            isPaused = false;
             getGameController().resumeEngine();
         });
 
@@ -205,6 +215,7 @@ public class BasicGameApp extends GameApplication{
             else
                 set("hp", 100);
             vbox.setVisible(false);
+            isPaused = false;
             getGameController().resumeEngine();
         });
 
@@ -323,7 +334,7 @@ public class BasicGameApp extends GameApplication{
         FXGL.getPhysicsWorld().addCollisionHandler(new CollisionHandler(EntityType.PLAYER, EntityType.COIN) {
             @Override
             protected void onCollisionBegin(Entity player, Entity coin){
-                //FXGL.play("eagle_death.wav");
+                FXGL.play("coin_get.wav");
                 FXGL.getGameWorld().removeEntity(coin);
                 inc("coins", +1);
 //                coinText.setText("Coins: " + geti("coins"));
@@ -334,7 +345,7 @@ public class BasicGameApp extends GameApplication{
         FXGL.getPhysicsWorld().addCollisionHandler(new CollisionHandler(EntityType.SWIPE, EntityType.ZOMBIE) {
             @Override
             protected void onCollisionBegin(Entity swipe, Entity zombie){
-                FXGL.play("slayy.wav");
+                FXGL.play("zombie_pain.wav");
                 FXGL.getGameWorld().removeEntity(zombie);
                 if (FXGLMath.randomBoolean())
                     spawn("coin", zombie.getPosition());
@@ -344,7 +355,7 @@ public class BasicGameApp extends GameApplication{
         FXGL.getPhysicsWorld().addCollisionHandler(new CollisionHandler(EntityType.SWIPE, EntityType.BIRD) {
             @Override
             protected void onCollisionBegin(Entity swipe, Entity bird){
-                FXGL.play("eagle_death.wav");
+                FXGL.play("bird_death.wav");
                 FXGL.getGameWorld().removeEntity(bird);
                 if (FXGLMath.randomBoolean())
                     spawn("coin", bird.getPosition());

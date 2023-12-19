@@ -37,7 +37,7 @@ public class Factory implements EntityFactory {
         return FXGL.entityBuilder(data)
                 .type(BasicGameApp.EntityType.BIRD)
                 //.view("zombie_eagle.png")
-                .viewWithBBox("joshua.jpg")
+                .viewWithBBox("bird_colored.png")
                 .with(new ProjectileComponent(new Point2D(0, 0), 500))
                 .with(new CollidableComponent(true))
                 .build();
