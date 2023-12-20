@@ -155,8 +155,8 @@ public class BasicGameApp extends GameApplication{
                 Point2D playerCenter = player.getCenter().subtract(player.getWidth(), player.getHeight());
 
                 zombie.translateTowards(player.getCenter().subtract(zombie.getWidth()/2.0, zombie.getHeight()/2.0), 1);
-                eagle.translateTowards(playerCenter.add(eagle.getWidth() /2.0, eagle.getHeight() / 2.0), 1);
-                bird.translateTowards(player.getCenter().subtract(bird.getWidth()/2.0, bird.getHeight()/2.0), 1);
+                eagle.translateTowards(playerCenter.add(eagle.getWidth() /2.0, eagle.getHeight() / 2.0), 1.25);
+                bird.translateTowards(player.getCenter().subtract(bird.getWidth()/2.0, bird.getHeight()/2.0), 0.85);
 
             }, Duration.seconds(0));
 
@@ -303,6 +303,22 @@ public class BasicGameApp extends GameApplication{
             }
         });
 
+        FXGL.getPhysicsWorld().addCollisionHandler(new CollisionHandler(EntityType.PLAYER, EntityType.BIRD) {
+            @Override
+            protected void onCollisionBegin(Entity player, Entity bird){
+                // damage player
+                inc("hp", -1);
+                getGameScene().getViewport().shakeTranslational(20);
+                play("player_pain.wav");
+            }
+        });
+
+
+
+
+
+
+
         // Collision handler for bossJoshua
         FXGL.getPhysicsWorld().addCollisionHandler(new CollisionHandler(EntityType.PLAYER, EntityType.BOSSJOSHUA) {
             @Override
@@ -378,7 +394,7 @@ public class BasicGameApp extends GameApplication{
 
     void gameOver() {
         // Display an image in the dialog
-        var image = FXGL.texture("skull.png");
+        var image = FXGL.texture("hand.png");
         image.setFitWidth(300);
         image.setFitHeight(300);
         // Create a VBox to hold the image and a message
@@ -436,7 +452,11 @@ public class BasicGameApp extends GameApplication{
         // Create a VBox to hold the image and a message
         VBox vbox = new VBox(10);
         Button upgradeHangerButton = new Button("Upgrade Hanger", new ImageView(FXGL.image("hanger.png")));
-        Button healButton = new Button("Heal", new ImageView(FXGL.image("redHeart.jpg")));
+        upgradeHangerButton.setTextFill(Color.WHITE);
+        upgradeHangerButton.setFont(Font.font(19));
+        Button healButton = new Button("Heal", new ImageView(FXGL.image("heart.png")));
+        healButton.setTextFill(Color.WHITE);
+        healButton.setFont(Font.font("SolsticeOfSuffering",19));
         upgradeHangerButton.setStyle("-fx-background-color: transparent;");
         healButton.setStyle("-fx-background-color: transparent;");
         vbox.getChildren().addAll(upgradeHangerButton, healButton);
@@ -461,3 +481,10 @@ public class BasicGameApp extends GameApplication{
         getDialogService().showBox("UPGRADE", new VBox(), upgradeHangerButton, healButton);
     }
 }
+
+
+//References
+// https://github.com/AlmasB
+// https://www.seekpng.com/idown/u2q8e6i1q8e6u2w7_-img-slash-effect/
+//
+
