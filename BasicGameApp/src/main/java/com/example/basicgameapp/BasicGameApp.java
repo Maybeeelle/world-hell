@@ -74,19 +74,18 @@ public class BasicGameApp extends GameApplication{
         SWIPE,
         BIRD,
         COIN,
-        YOULOSE
+        YOULOSE,
+        BOSSJOSHUA
     }
     @Override
     protected void onPreInit() {
+        loopBGM("Rip & Tear Doom OST.mp3");
         getSettings().setGlobalMusicVolume(0.2);
         getSettings().setGlobalSoundVolume(0.5);
     }
     @Override
     protected void initGame(){
-
-        loopBGM("Doom Eternal OST - The Only Thing They Fear Is You (Mick Gordon) [Doom Eternal Theme].mp3");
-        // lower bgm volume
-
+        loopBGM("Rip & Tear Doom OST.mp3");
 
         // reset time
         set("time", 0);
@@ -127,6 +126,23 @@ public class BasicGameApp extends GameApplication{
             Entity eagle = spawn("eagle", new Point2D(-1,-1));
             Entity bird = spawn("bird", new Point2D(-1,-1));
 
+            // spawn boss joshua if time is 4 mins
+            if (geti("time") >= 240) {
+                Entity bossJoshua = spawn("bossJoshua", new Point2D(-1,-1));
+                initPosition(bossJoshua);
+                bossJoshua.setRotation(8d);
+                run(() -> {
+                    Point2D playerCenter = player.getCenter().subtract(player.getWidth(), player.getHeight());
+
+                    bossJoshua.translateTowards(player.getCenter().subtract(zombie.getWidth()/2.0, zombie.getHeight()/2.0), 3);
+
+                }, Duration.seconds(0));
+
+                run(() -> {
+                    bossJoshua.setRotation(bossJoshua.getRotation() * -1);
+                }, Duration.millis(400));
+            }
+
             initPosition(zombie);
             initPosition(eagle);
             initPosition(bird);
@@ -154,6 +170,7 @@ public class BasicGameApp extends GameApplication{
         // player swipes
         run(() -> {
             Entity swipe = spawn("swipe", new Point2D(player.getX() + 128, player.getY()));
+            play("swipe.wav");
             if (geti("hangerLevel") >= 2){
                 Entity swipe2 = spawn("swipe", new Point2D(player.getX() - 128, player.getY()));
                 despawnWithDelay(swipe2, Duration.millis(100));
@@ -174,7 +191,7 @@ public class BasicGameApp extends GameApplication{
         timerText.setText("Time: " + geti("time"));
 
         // game ends in 5 mins
-        if (geti("time") >= 600) {
+        if (geti("time") >= 300) {
             youWin();
         }
 
@@ -316,8 +333,8 @@ public class BasicGameApp extends GameApplication{
             protected void onCollisionBegin(Entity player, Entity zombie){
                 // TODO: make a damage component of zombie
                 inc("hp", -10);
-                getGameScene().getViewport().shakeTranslational(5);
-                play("ai.wav");
+                getGameScene().getViewport().shakeTranslational(20);
+                play("player_pain.wav");
             }
         });
 
@@ -327,8 +344,19 @@ public class BasicGameApp extends GameApplication{
             protected void onCollisionBegin(Entity player, Entity eagle){
                 // damage player
                 inc("hp", -10);
-                getGameScene().getViewport().shakeTranslational(5);
-                play("ai.wav");
+                getGameScene().getViewport().shakeTranslational(20);
+                play("player_pain.wav");
+            }
+        });
+
+        // Collision handler for bossJoshua
+        FXGL.getPhysicsWorld().addCollisionHandler(new CollisionHandler(EntityType.PLAYER, EntityType.BOSSJOSHUA) {
+            @Override
+            protected void onCollision(Entity player, Entity bossJoshua){
+                // damage player
+                inc("hp", -1);
+                getGameScene().getViewport().shakeTranslational(20);
+                play("player_pain.wav");
             }
         });
         FXGL.getPhysicsWorld().addCollisionHandler(new CollisionHandler(EntityType.SWIPE, EntityType.EAGLE) {
@@ -372,6 +400,19 @@ public class BasicGameApp extends GameApplication{
                     spawn("coin", bird.getPosition());
             }
         });
+
+        FXGL.getPhysicsWorld().addCollisionHandler(new CollisionHandler(EntityType.SWIPE, EntityType.BOSSJOSHUA) {
+            @Override
+            protected void onCollisionBegin(Entity swipe, Entity bossJoshua){
+                FXGL.play("joshua_laugh.wav");
+                // 50% chance to kill boss joshua
+                if (FXGLMath.randomBoolean()){
+                    FXGL.play("tangina_mo.wav");
+                    FXGL.getGameWorld().removeEntity(bossJoshua);
+                    spawn("coin", bossJoshua.getPosition());
+                }
+            }
+        });
     }
 
     void initPosition(Entity entity) {
@@ -385,9 +426,6 @@ public class BasicGameApp extends GameApplication{
     }
 
     void gameOver() {
-
-
-        Font.loadFont("https://C:/Users/majah/Downloads/solstice-of-suffering-font/Solsticeofsuffering-wonn.ttf",12);
         // Display an image in the dialog
         var image = FXGL.texture("skull.png");
         image.setFitWidth(300);
@@ -412,13 +450,13 @@ public class BasicGameApp extends GameApplication{
             getGameController().gotoMainMenu();
         });
         getAudioPlayer().stopAllMusic();
-
-
-
     }
     void youWin() {
-        showMessage("You Win!\nYour Score: " + geti("score"), () -> getGameController().gotoMainMenu());
         getAudioPlayer().stopAllMusic();
+        showMessage("You WIN!\nYour Score: " + geti("score"), () -> {
+            getGameController().gotoMainMenu();
+            loopBGM("Rip & Tear Doom OST.mp3");
+        });
     }
 
 }

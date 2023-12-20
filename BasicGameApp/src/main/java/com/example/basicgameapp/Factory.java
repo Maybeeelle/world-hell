@@ -74,4 +74,12 @@ public class Factory implements EntityFactory {
                 .build();
     }
 
+    @Spawns("bossJoshua")
+    public Entity newJoshua(SpawnData data) {
+        return FXGL.entityBuilder(data)
+                .type(BasicGameApp.EntityType.BOSSJOSHUA)
+                .viewWithBBox("joshua.jpg")
+                .with(new CollidableComponent(true))
+                .build();
+    }
 }
