@@ -19,6 +19,8 @@ import javafx.scene.Node;
 import javafx.scene.control.Button;
 import javafx.scene.control.Label;
 import javafx.scene.control.MenuButton;
+import javafx.scene.image.Image;
+import javafx.scene.image.ImageView;
 import javafx.scene.input.KeyCode;
 import javafx.scene.layout.VBox;
 import javafx.scene.paint.Color;
@@ -41,7 +43,6 @@ public class BasicGameApp extends GameApplication{
     private ProgressBar hpBar;
 
     private ProgressBar coins;
-    private Boolean isPaused = false;
     @Override
     protected void initSettings(GameSettings settings){
         //sa Windows nung game 600 X2 600 na siya
@@ -209,51 +210,8 @@ public class BasicGameApp extends GameApplication{
     }
 
     void levelUp() {
-        // TODO: FIX THIS SHIT
-        if (isPaused) {
-            return;
-        }
-        isPaused = true;
         getGameController().pauseEngine();
-        var vbox = new VBox(3);
-
-        // TODO: make a level up menu
-        var choice1 = new FXGLButton("Upgrade Hanger");
-        var choice2 = new FXGLButton("Heal");
-
-
-        choice1.setTextFill(Color.BLACK);
-        choice1.setText("Upgrade Hanger");
-        choice1.setOnMouseClicked(e -> {
-            inc("hangerLevel", +1);
-            vbox.setVisible(false);
-            isPaused = false;
-            inc("coin_trigger", +10);
-            coins.setMaxValue(geti("coin_trigger"));
-            getGameController().resumeEngine();
-        });
-
-        choice2.setTextFill(Color.BLACK);
-        choice2.setOnMouseClicked(e -> {
-            var healthHeal = 30;
-            if (geti("hp") < 100 - healthHeal)
-                inc("hp", + healthHeal);
-            else
-                set("hp", 100);
-            vbox.setVisible(false);
-            isPaused = false;
-            inc("coin_trigger", +10);
-            coins.setMaxValue(geti("coin_trigger"));
-            getGameController().resumeEngine();
-        });
-
-
-        vbox.getChildren().addAll(choice1, choice2);
-
-        vbox.setTranslateX(getAppWidth() / 2.0 - vbox.getWidth() * 2.0);
-        vbox.setTranslateY(getAppHeight() / 2.0 - vbox.getHeight() / 2.0);
-
-        getGameScene().addChild(vbox);
+        upgradeMenu();
     }
 
     @Override
@@ -277,20 +235,10 @@ public class BasicGameApp extends GameApplication{
 
     @Override
     protected void initUI(){
-        //For the display of the coins count
-//       coinText = FXGL.getUIFactoryService().newText("",Color.BLACK, 20.0);
-//       coinText.setTranslateX(50);
-//       coinText.setTranslateY(70);
 
         timerText = FXGL.getUIFactoryService().newText("",Color.BLACK, 24.0);
         timerText.setTranslateX(50);
         timerText.setTranslateY(50);
-
-//       hpText = FXGL.getUIFactoryService().newText("",Color.BLACK, 24.0);
-//       hpText.setTranslateX(50);
-//       hpText.setTranslateY(90);
-//
-//       hpText.setText(String.valueOf(geti("hp")));
 
         coins = new ProgressBar();
         coins.setMaxValue(10);
@@ -307,8 +255,6 @@ public class BasicGameApp extends GameApplication{
         hpBar.setFill(Color.RED);
 
         FXGL.getGameScene().addUINode(timerText);
-//       FXGL.getGameScene().addUINode(coinText);
-//       FXGL.getGameScene().addUINode(hpText);
         addUINode(coins, 0,0 );
         addUINode(hpBar, player.getX() - hpBar.getBackgroundBar().getWidth(), player.getY() + 10);
     }
@@ -377,9 +323,6 @@ public class BasicGameApp extends GameApplication{
                 FXGL.play("coin_get.wav");
                 FXGL.getGameWorld().removeEntity(coin);
                 inc("coins", +1);
-//                coinText.setText("Coins: " + geti("coins"));
-
-
             }
         });
         FXGL.getPhysicsWorld().addCollisionHandler(new CollisionHandler(EntityType.SWIPE, EntityType.ZOMBIE) {
@@ -445,8 +388,6 @@ public class BasicGameApp extends GameApplication{
         // Show the dialog with the image and message
         FXGL.getDialogService().showBox("Game Over", vbox, goMain);
         goMain.setOnAction(event -> {
-
-
             // Go back to the WorldHellMenu
             getGameController().gotoMainMenu();
         });
@@ -460,4 +401,57 @@ public class BasicGameApp extends GameApplication{
         });
     }
 
+    void upgradeMenu() {
+        // Create a VBox to hold the image and a message
+        VBox vbox = new VBox(10);
+        Button upgradeHangerButton = new Button("Upgrade Hanger", new ImageView(FXGL.image("joshua.jpg")));
+        Button healButton = new Button("Heal", new ImageView(FXGL.image("redHeart.jpg")));
+        upgradeHangerButton.setStyle("-fx-background-color: transparent;");
+        healButton.setStyle("-fx-background-color: transparent;");
+        vbox.getChildren().addAll(upgradeHangerButton, healButton);
+        upgradeHangerButton.setOnAction(event -> {
+            inc("hangerLevel", +1);
+            getGameController().resumeEngine();
+        });
+        healButton.setOnAction(event -> {
+            var healthHeal = 30;
+            if (geti("hp") < 100 - healthHeal)
+                inc("hp", + healthHeal);
+            else
+                set("hp", 100);
+            getGameController().resumeEngine();
+        });
+        getAudioPlayer().stopAllMusic();
+
+        getDialogService().showBox("UPGRADE", new VBox(), upgradeHangerButton, healButton);
+    }
+
+    void almasTest() {
+        VBox content = new VBox(
+                getUIFactoryService().newText("Line 1"),
+                getUIFactoryService().newText("Line 2"),
+                getAssetLoader().loadTexture("brick.png"),
+                getUIFactoryService().newText("Line 3"),
+                getUIFactoryService().newText("Line 4")
+        );
+
+        Button upgradeHangerButton = getUIFactoryService().newButton("Upgrade Hanger");
+        upgradeHangerButton.setPrefWidth(300);
+
+        getDialogService().showBox("This is a customizable box", content, upgradeHangerButton);
+    }
+
+//    void upgradeChoice(String choice) {
+//        if (choice.equals("Upgrade Hanger")) {
+//            inc("hangerLevel", +1);
+//            getGameController().resumeEngine();
+//        } else if (choice.equals("Heal")) {
+//            var healthHeal = 30;
+//            if (geti("hp") < 100 - healthHeal)
+//                inc("hp", + healthHeal);
+//            else
+//                set("hp", 100);
+//            getGameController().resumeEngine();
+//        }
+//    }
 }
