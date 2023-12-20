@@ -173,6 +173,7 @@ public class BasicGameApp extends GameApplication{
             play("swipe.wav");
             if (geti("hangerLevel") >= 2){
                 Entity swipe2 = spawn("swipe", new Point2D(player.getX() - 128, player.getY()));
+                swipe2.setRotation(180);
                 despawnWithDelay(swipe2, Duration.millis(100));
             }
             despawnWithDelay(swipe, Duration.millis(100));
