@@ -394,11 +394,36 @@ public class BasicGameApp extends GameApplication{
         getAudioPlayer().stopAllMusic();
     }
     void youWin() {
-        getAudioPlayer().stopAllMusic();
-        showMessage("You WIN!\nYour Score: " + geti("score"), () -> {
+
+        // Display an image in the dialog
+        var image = FXGL.texture("skull.png");
+        image.setFitWidth(300);
+        image.setFitHeight(300);
+        // Create a VBox to hold the image and a message
+        VBox vbox = new VBox(10);
+        vbox.setAlignment(Pos.CENTER);
+        Label showMess=  new Label("   You WIN!\nYour Score: " + geti("score"));
+        showMess.setTextFill(Color.WHITE);
+        showMess.setFont(Font.font(35));
+        vbox.getChildren().addAll(image, showMess);
+
+        Button goMain= FXGL.getUIFactoryService().newButton("Main Menu");
+
+
+        // Show the dialog with the image and message
+        FXGL.getDialogService().showBox("YOU WIN!!!", vbox, goMain);
+        goMain.setOnAction(event -> {
+            // Go back to the WorldHellMenu
             getGameController().gotoMainMenu();
-            loopBGM("Rip & Tear Doom OST.mp3");
         });
+        //getAudioPlayer().stopAllMusic();
+
+
+//        getAudioPlayer().stopAllMusic();
+//        showMessage("You WIN!\nYour Score: " + geti("score"), () -> {
+//            getGameController().gotoMainMenu();
+            loopBGM("Rip & Tear Doom OST.mp3");
+//        });
     }
 
     void upgradeMenu() {

@@ -47,7 +47,7 @@ public class Factory implements EntityFactory {
         return FXGL.entityBuilder(data)
                 .type(BasicGameApp.EntityType.SWIPE)
                 //.view("zombie_eagle.png")
-                .viewWithBBox("swipe.png")
+                .viewWithBBox("rightslash.png")
                 .with(new ProjectileComponent(new Point2D(0, 0), 500))
                 .with(new CollidableComponent(true))
                 .build();

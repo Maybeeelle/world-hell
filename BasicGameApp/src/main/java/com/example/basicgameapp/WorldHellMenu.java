@@ -125,7 +125,7 @@ public class WorldHellMenu extends FXGLMenu {
             creditsStage.setTitle("Credits");
 
             // Load and set the background image for the credits stage
-            ImageView creditsBackground = new ImageView(FXGL.image("rulesOfGames.png"));
+            ImageView creditsBackground = new ImageView(FXGL.image("rog2.png"));
             creditsBackground.setFitWidth(800); // Set the desired width
             creditsBackground.setFitHeight(800);
 
