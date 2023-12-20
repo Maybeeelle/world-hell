@@ -476,15 +476,18 @@ public class BasicGameApp extends GameApplication{
             coins.setMaxValue(geti("coin_trigger"));
             getGameController().resumeEngine();
         });
+
         getAudioPlayer().stopAllMusic();
 
-        getDialogService().showBox("UPGRADE", new VBox(), upgradeHangerButton, healButton);
+        if (geti("hangerLevel") > 1) {
+            getDialogService().showBox("UPGRADE", new VBox(), healButton);
+        } else {
+            getDialogService().showBox("UPGRADE", new VBox(), upgradeHangerButton, healButton);
+        }
     }
 }
-
 
 //References
 // https://github.com/AlmasB
 // https://www.seekpng.com/idown/u2q8e6i1q8e6u2w7_-img-slash-effect/
 //
-
