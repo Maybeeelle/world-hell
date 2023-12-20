@@ -128,7 +128,7 @@ public class BasicGameApp extends GameApplication{
             Entity bird = spawn("bird", new Point2D(-1,-1));
 
             // spawn boss joshua if time is 4 mins
-            if (geti("time") >= 240) {
+            if (geti("time") >= 120) {
                 Entity bossJoshua = spawn("bossJoshua", new Point2D(-1,-1));
                 initPosition(bossJoshua);
                 bossJoshua.setRotation(8d);
@@ -141,7 +141,7 @@ public class BasicGameApp extends GameApplication{
 
                 run(() -> {
                     bossJoshua.setRotation(bossJoshua.getRotation() * -1);
-                }, Duration.millis(400));
+                }, Duration.millis(100));
             }
 
             initPosition(zombie);
@@ -193,7 +193,8 @@ public class BasicGameApp extends GameApplication{
         timerText.setText("Time: " + geti("time"));
 
         // game ends in 5 mins
-        if (geti("time") >= 300) {
+        if (geti("time") >= 180) {
+            play("napakagaling_ni_sir.wav");
             youWin();
         }
 
@@ -206,6 +207,11 @@ public class BasicGameApp extends GameApplication{
             // score = coins / time + time
             set("score", geti("coins") / (int) getGameTimer().getNow() * 100 + (int) getGameTimer().getNow() / 10);
             gameOver();
+        }
+
+        if (geti("time") == 120 && geti("joshua_flag") == 1){
+            play("joshuas_coming.wav");
+            set("joshua_flag", 0);
         }
     }
 
@@ -268,6 +274,7 @@ public class BasicGameApp extends GameApplication{
         vars.put("hangerLevel", 1);
         vars.put("hangerSpeed", 1);
         vars.put("coin_trigger", 10);
+        vars.put("joshua_flag", 1);
     }
 
     @Override
@@ -351,7 +358,7 @@ public class BasicGameApp extends GameApplication{
                 FXGL.play("joshua_laugh.wav");
                 // 50% chance to kill boss joshua
                 if (FXGLMath.randomBoolean()){
-                    FXGL.play("tangina_mo.wav");
+                    FXGL.play("joshua_death.wav");
                     FXGL.getGameWorld().removeEntity(bossJoshua);
                     spawn("coin", bossJoshua.getPosition());
                 }
@@ -429,13 +436,15 @@ public class BasicGameApp extends GameApplication{
     void upgradeMenu() {
         // Create a VBox to hold the image and a message
         VBox vbox = new VBox(10);
-        Button upgradeHangerButton = new Button("Upgrade Hanger", new ImageView(FXGL.image("joshua.jpg")));
+        Button upgradeHangerButton = new Button("Upgrade Hanger", new ImageView(FXGL.image("hanger.png")));
         Button healButton = new Button("Heal", new ImageView(FXGL.image("redHeart.jpg")));
         upgradeHangerButton.setStyle("-fx-background-color: transparent;");
         healButton.setStyle("-fx-background-color: transparent;");
         vbox.getChildren().addAll(upgradeHangerButton, healButton);
         upgradeHangerButton.setOnAction(event -> {
             inc("hangerLevel", +1);
+            inc("coin_trigger", +10);
+            coins.setMaxValue(geti("coin_trigger"));
             getGameController().resumeEngine();
         });
         healButton.setOnAction(event -> {
@@ -444,39 +453,12 @@ public class BasicGameApp extends GameApplication{
                 inc("hp", + healthHeal);
             else
                 set("hp", 100);
+            inc("coin_trigger", +10);
+            coins.setMaxValue(geti("coin_trigger"));
             getGameController().resumeEngine();
         });
         getAudioPlayer().stopAllMusic();
 
         getDialogService().showBox("UPGRADE", new VBox(), upgradeHangerButton, healButton);
     }
-
-    void almasTest() {
-        VBox content = new VBox(
-                getUIFactoryService().newText("Line 1"),
-                getUIFactoryService().newText("Line 2"),
-                getAssetLoader().loadTexture("brick.png"),
-                getUIFactoryService().newText("Line 3"),
-                getUIFactoryService().newText("Line 4")
-        );
-
-        Button upgradeHangerButton = getUIFactoryService().newButton("Upgrade Hanger");
-        upgradeHangerButton.setPrefWidth(300);
-
-        getDialogService().showBox("This is a customizable box", content, upgradeHangerButton);
-    }
-
-//    void upgradeChoice(String choice) {
-//        if (choice.equals("Upgrade Hanger")) {
-//            inc("hangerLevel", +1);
-//            getGameController().resumeEngine();
-//        } else if (choice.equals("Heal")) {
-//            var healthHeal = 30;
-//            if (geti("hp") < 100 - healthHeal)
-//                inc("hp", + healthHeal);
-//            else
-//                set("hp", 100);
-//            getGameController().resumeEngine();
-//        }
-//    }
 }
