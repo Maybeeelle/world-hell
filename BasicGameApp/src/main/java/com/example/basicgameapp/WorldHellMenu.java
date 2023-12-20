@@ -10,6 +10,7 @@ import javafx.geometry.Insets;
 import javafx.geometry.Pos;
 import javafx.scene.Scene;
 import javafx.scene.control.Label;
+import javafx.scene.text.Font;
 import javafx.stage.Stage;
 import javafx.stage.StageStyle;
 import javafx.scene.Node;
@@ -157,6 +158,8 @@ public class WorldHellMenu extends FXGLMenu {
 
     private Button createBackToMenuButton() {
         Button backButton = new Button("Back to Menu");
+        backButton.setFont(new Font("SolsticeOfSuffering",12));
+
 
         backButton.setTranslateX(330);
         backButton.setTranslateY(350);

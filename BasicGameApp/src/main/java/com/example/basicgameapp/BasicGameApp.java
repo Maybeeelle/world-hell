@@ -484,5 +484,4 @@ public class BasicGameApp extends GameApplication{
             loopBGM("Rip & Tear Doom OST.mp3");
 //        });
     }
-
 }
